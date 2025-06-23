@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -13,20 +15,24 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $user = User::create([
-            'name' => 'Admin',
-            // 'firstName' => 'Allan',
-            'email' => 'admin@admin.com',
-            //'photo' => 'images/avatar/1.png',
-            // 'phoneNumber' => '0755555555',
-            'password'=>bcrypt("admin..123")
-        ]);
+        // Create admin user if it doesn't exist
+        if (!User::where('email', 'admin@admin.com')->exists()) {
+            User::create([
+                'name' => 'Admin',
+                'email' => 'admin@admin.com',
+                'password' => Hash::make('admin..123'),
+                'email_verified_at' => now(),
+            ]);
+        }
 
+        // Run seeders
         $this->call([
-            FarmerSeeder::class,
-            FarmSeeder::class,
-            HiveSeeder::class,
-            HiveTemperatureSeeder::class,
+            TeamSeeder::class,
+            // Comment out or remove the following seeders if not needed
+            // FarmerSeeder::class,
+            // FarmSeeder::class,
+            // HiveSeeder::class,
+            // HiveTemperatureSeeder::class,
         ]);
     }
 }

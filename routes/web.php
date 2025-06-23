@@ -25,6 +25,19 @@ use App\Http\Controllers\ScholarshipDisplayController;
 |
 */
 
+// Debug route for session configuration
+Route::get('/debug/session', function () {
+    return [
+        'session_driver' => config('session.driver'),
+        'session_domain' => config('session.domain'),
+        'session_secure' => config('session.secure'),
+        'session_http_only' => config('session.http_only'),
+        'app_env' => config('app.env'),
+        'app_debug' => config('app.debug'),
+        'app_url' => config('app.url'),
+    ];
+});
+
 Route::get('/',[App\Http\Controllers\WebsiteController::class, 'index'])->name('website'); //route for home page, before login
 Route::get('register', [AuthController::class, 'registerForm'])->name('registerForm');//
 Route::post('register', [AuthController::class, 'register'])->name('auth.register');
