@@ -64,13 +64,30 @@
         @enderror
 </div>
 <div class="form-group">
-    <label for="description" class="control-label">{{ 'Research Interests' }}</label>
+    <label for="description" class="control-label">{{ 'Description' }}</label>
     <textarea class="form-control @error('description') is-invalid @enderror" value="{{old('description')}}" rows="5" name="description" type="textarea" id="description" >{{ isset($team->description) ? $team->description : ''}}</textarea>
     @error('description')
         <div class="invalid-feedback mt-2 text-sm">
             {{ $message }}
         </div>
-        @enderror
+    @enderror
+</div>
+
+<div class="form-group">
+    <label for="category" class="control-label">{{ 'Category' }}</label>
+    <select class="form-control @error('category') is-invalid @enderror" name="category" id="category" required>
+        <option value="" disabled {{ !isset($team->category) ? 'selected' : '' }}>Select a category</option>
+        <option value="Leadership" {{ (isset($team->category) && $team->category == 'Leadership') || old('category') == 'Leadership' ? 'selected' : '' }}>Leadership</option>
+        <option value="Senior Researchers" {{ (isset($team->category) && $team->category == 'Senior Researchers') || old('category') == 'Senior Researchers' ? 'selected' : '' }}>Senior Researchers</option>
+        <option value="Researchers" {{ (isset($team->category) && $team->category == 'Researchers') || old('category') == 'Researchers' ? 'selected' : '' }}>Researchers</option>
+        <option value="Interns" {{ (isset($team->category) && $team->category == 'Interns') || old('category') == 'Interns' ? 'selected' : '' }}>Interns</option>
+        <option value="Alumni" {{ (isset($team->category) && $team->category == 'Alumni') || old('category') == 'Alumni' ? 'selected' : '' }}>Alumni</option>
+    </select>
+    @error('category')
+        <div class="invalid-feedback mt-2 text-sm">
+            {{ $message }}
+        </div>
+    @enderror
 </div>
 <div class="form-group">
     <label for="image" class="control-label">{{ 'Image' }}(jpg, peg & png only allowed)</label>

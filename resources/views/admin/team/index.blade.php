@@ -2,52 +2,61 @@
 @section('content')
 
 <div id="myTableContainer" class="relative p-3 mt-4 overflow-x-auto shadow-md sm:rounded-lg">
-    <div class="">
-        <button type="button" data-modal-target="addTeam" data-modal-show="addTeam" class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Add New Team Member</button>
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Team Members</h2>
+        <button type="button" data-modal-target="addTeam" data-modal-show="addTeam" class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+            <i class="fas fa-plus mr-2"></i>Add New Team Member
+        </button>
     </div> 
-   <table id="myTable" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-       <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-           <tr>        
-               <th scope="col" class="px-6 py-3">
-                   Name
-               </th>
-               <th scope="col" class="px-6 py-3">
-                   Position
-               </th>
-               <!-- <th scope="col" class="px-6 py-3">
-                   Description
-               </th> -->
-               <th scope="col" class="px-6 py-3">
-                   Action
-               </th>
-           </tr>
-       </thead>
-       <tbody>
-       @foreach($team as $item)
-           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-              
-               <th scope="row" class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                   <img class="w-10 h-10 rounded-full" src="/images/{{ $item->image_path }}" alt="Jese image"/>
-                   <div class="pl-3">
-                       <div class="text-base font-semibold">{{ $item->name }}</div>
-                       <div class="font-normal text-gray-500"></div>
-                   </div>  
-               </th>
-               <td class="px-6 py-4">
-               {{ $item->title }}
-               </td>
-               <!-- <td class="px-6 py-4">
-                   <div class="flex items-center">
-                   <details><summary>{{ $item->name }}'s description</summary>{{ $item->description }}</details>
-                   </div>
-               </td> -->
-               <td class="px-6 py-4">
-                   <!-- Modal toggle -->
-                   <a href="#" type="button" data-modal-target="{{ $item->name }}" data-modal-show="{{ $item->name }}" style="color: white; background-color:  #28a745; width: auto; height: 30px; padding: 5px; border-radius: 5px;"  class="">View</a>
-                   <a href="#" type="button" data-modal-target="{{ $item->id }}" data-modal-show="{{ $item->id}}" style="color: white; background-color: #ffc107; width: auto; height: 30px; padding: 5px; border-radius: 5px;"  class="">Edit</a>
-                   <a href="#" type="button" data-modal-target="{{ $item->description }}" data-modal-show="{{ $item->description}}" style="color: white; background-color:  #dc3545; width: auto; height: 30px; padding: 5px; border-radius: 5px;"  class="">Delete</a>
-                                      
-               </td>
+
+    @php
+        $categories = ['Leadership', 'Senior Researchers', 'Researchers', 'Interns', 'Alumni'];
+    @endphp
+
+    @foreach($categories as $category)
+        @php
+            $teamMembers = $team->where('category', $category);
+        @endphp
+        
+        @if($teamMembers->count() > 0)
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 pb-2 border-b border-gray-200">
+                    {{ $category }} ({{ $teamMembers->count() }})
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach($teamMembers as $member)
+                        <div class="bg-white rounded-lg border border-gray-200 shadow-sm dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
+                            <div class="p-4">
+                                <div class="flex items-center space-x-4">
+                                    <img class="w-16 h-16 rounded-full object-cover" src="{{ asset('images/' . $member->image_path) }}" alt="{{ $member->name }}">
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-lg font-semibold text-gray-900 dark:text-white truncate">{{ $member->name }}</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400 truncate">{{ $member->title }}</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <p class="text-sm text-gray-600 dark:text-gray-300 line-clamp-3">{{ Str::limit($member->description, 120) }}</p>
+                                </div>
+                                <div class="mt-4 flex space-x-2">
+                                    <button type="button" data-modal-target="{{ $member->name }}" data-modal-show="{{ $member->name }}" class="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded text-sm">
+                                        <i class="fas fa-eye mr-1"></i> View
+                                    </button>
+                                    <button type="button" data-modal-target="{{ $member->id }}" data-modal-show="{{ $member->id }}" class="text-white bg-yellow-500 hover:bg-yellow-600 px-3 py-1.5 rounded text-sm">
+                                        <i class="fas fa-edit mr-1"></i> Edit
+                                    </button>
+                                    <button type="button" data-modal-target="{{ $member->description }}" data-modal-show="{{ $member->description }}" class="text-white bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-sm">
+                                        <i class="fas fa-trash-alt mr-1"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+    @endforeach
+</div>
            
          
            </tr>
@@ -86,9 +95,21 @@
                            <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Research Interests</label>
                            <textarea id="description" name="description" rows="4" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Write your thoughts here..."></textarea>
                        </div>
-                       <div class="col-span-6 sm:col-span-6">
-                           <label for="image" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Image(jpg, peg & png only allowed)</label>
-                           <input name="image"  class="block w-full text-sm text-gray-900 border shadow-sm bg-gray-50 border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="image" type="file" multiple>
+                       <div class="col-span-6 sm:col-span-3">
+                           <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
+                           <select id="category" name="category" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" required>
+                               <option value="" disabled selected>Select a category</option>
+                               <option value="Leadership">Leadership</option>
+                               <option value="Senior Researchers">Senior Researchers</option>
+                               <option value="Researchers">Researchers</option>
+                               <option value="Interns">Interns</option>
+                               <option value="Alumni">Alumni</option>
+                           </select>
+                       </div>
+                       <div class="col-span-6 sm:col-span-3">
+                           <label for="image" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Image (jpg, jpeg, png only)</label>
+                           <input name="image" class="block w-full text-sm text-gray-900 border shadow-sm bg-gray-50 border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="image" type="file" accept="image/jpeg,image/png,image/jpg" required>
+                           <p class="mt-1 text-xs text-gray-500 dark:text-gray-300">Recommended size: 400x400px (1:1 aspect ratio)</p>
                        </div>
                        
                    </div>
@@ -132,12 +153,33 @@
                            <input type="text" name="title" value="{{ old('title', $item->title) }}" id="title" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Green" required="">
                        </div>
                        <div class="col-span-6 sm:col-span-6">
-                           <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
-                           <textarea class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"  rows="5" name="description" type="textarea" id="description" >{{ old('description', $item->description) }}</textarea>
+                           <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Research Interests</label>
+                           <textarea class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" rows="4" name="description" type="textarea" id="description">{{ old('description', $item->description) }}</textarea>
+                       </div>
+                       <div class="col-span-6 sm:col-span-3">
+                           <label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
+                           <select id="category" name="category" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" required>
+                               <option value="Leadership" @if($item->category == 'Leadership') selected @endif>Leadership</option>
+                               <option value="Senior Researchers" @if($item->category == 'Senior Researchers') selected @endif>Senior Researchers</option>
+                               <option value="Researchers" @if($item->category == 'Researchers') selected @endif>Researchers</option>
+                               <option value="Interns" @if($item->category == 'Interns') selected @endif>Interns</option>
+                               <option value="Alumni" @if($item->category == 'Alumni') selected @endif>Alumni</option>
+                           </select>
+                       </div>
+                       <div class="col-span-6 sm:col-span-3">
+                           <label for="image" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Update Image (optional)</label>
+                           <input name="image" class="block w-full text-sm text-gray-900 border shadow-sm bg-gray-50 border-gray-300 rounded-lg cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="image" type="file" accept="image/jpeg,image/png,image/jpg">
+                           <p class="mt-1 text-xs text-gray-500 dark:text-gray-300">Current: {{ $item->image_path }}</p>
+                           <p class="text-xs text-gray-500 dark:text-gray-300">Leave empty to keep current image</p>
                        </div>
                        <div class="col-span-6 sm:col-span-6">
-                           <label for="company" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Image(jpg, peg & png only allowed)</label>
-                           <input class="block w-full text-sm text-gray-900 border shadow-sm bg-gray-50 border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="multiple_files" type="file" multiple>
+                           <div class="flex items-center space-x-4">
+                               @if($item->image_path)
+                                   <div class="flex-shrink-0">
+                                       <img class="w-16 h-16 rounded-full object-cover" src="{{ asset('images/' . $item->image_path) }}" alt="{{ $item->name }}">
+                                   </div>
+                               @endif
+                           </div>
                        </div>
                        
                    </div>

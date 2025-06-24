@@ -25,9 +25,15 @@ class TeamController extends Controller
         if (!empty($keyword)) {
             $team = Team::where('name', 'LIKE', "%$keyword%")
                 ->orWhere('description', 'LIKE', "%$keyword%")
-                ->latest()->paginate($perPage);
+                ->orWhere('title', 'LIKE', "%$keyword%")
+                ->orWhere('category', 'LIKE', "%$keyword%")
+                ->orderBy('category')
+                ->orderBy('name')
+                ->get();
         } else {
-            $team = Team::latest()->paginate($perPage);
+            $team = Team::orderBy('category')
+                ->orderBy('name')
+                ->get();
         }
 
         return view('admin.team.index', compact('team'));
@@ -53,22 +59,33 @@ class TeamController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'name'=>'required|max:255',
-            'title'=>'required|max:255',
-            'description'=>'required',
-            'image'=>'required|mimes:jpg,png,jpeg|max:5048'
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'category' => 'required|string|in:Leadership,Senior Researchers,Researchers,Interns,Alumni',
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:5048',
         ]);
 
-        $newImageName = time() . '-' . $request->name . '.' . $request->image->extension();
-        $request->image->move(public_path('images'), $newImageName);
-        $requestData = $request->all();
-        $requestData['image_path'] = $newImageName;
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . str_replace(' ', '_', $request->name) . '.' . $image->getClientOriginalExtension();
+            
+            // Ensure the directory exists
+            $destinationPath = public_path('images/team');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            
+            $image->move($destinationPath, $imageName);
+            $validatedData['image_path'] = 'team/' . $imageName;
+        }
 
-        
-        Team::create($requestData);
+        Team::create($validatedData);
 
-        return redirect('admin/team')->with('flash_message', 'Team added!');
+        return redirect('admin/team')
+            ->with('success', 'Team member added successfully!');
     }
 
     /**
@@ -110,13 +127,51 @@ class TeamController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
-        $requestData = $request->all();
-        
-        $team = Team::findOrFail($id);
-        $team->update($requestData);
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'category' => 'required|string|in:Leadership,Senior Researchers,Researchers,Interns,Alumni',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:5048',
+        ]);
 
-        return redirect('admin/team')->with('flash_message', 'Team updated!');
+        $team = Team::findOrFail($id);
+        
+        // Handle image upload if a new image is provided
+        if ($request->hasFile('image')) {
+            // Delete old image if it exists
+            $oldImagePath = public_path('images/' . $team->image_path);
+            if ($team->image_path && file_exists($oldImagePath)) {
+                try {
+                    unlink($oldImagePath);
+                } catch (\Exception $e) {
+                    // Log error but don't stop execution
+                    \Log::error('Failed to delete old image: ' . $e->getMessage());
+                }
+            }
+            
+            // Upload new image
+            $image = $request->file('image');
+            $imageName = time() . '_' . str_replace(' ', '_', $request->name) . '.' . $image->getClientOriginalExtension();
+            
+            // Ensure the directory exists
+            $destinationPath = public_path('images/team');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            
+            $image->move($destinationPath, $imageName);
+            $validatedData['image_path'] = 'team/' . $imageName;
+        } else {
+            // Remove image from validated data if not being updated
+            unset($validatedData['image']);
+        }
+        
+        // Update the team member with validated data
+        $team->update($validatedData);
+
+        return redirect('admin/team')
+            ->with('success', 'Team member updated successfully!');
     }
 
     /**
@@ -128,8 +183,25 @@ class TeamController extends Controller
      */
     public function destroy($id)
     {
-        Team::destroy($id);
+        $team = Team::findOrFail($id);
+        
+        // Delete the associated image if it exists
+        if ($team->image_path) {
+            $imagePath = public_path('images/' . $team->image_path);
+            if (file_exists($imagePath)) {
+                try {
+                    unlink($imagePath);
+                } catch (\Exception $e) {
+                    // Log error but don't stop execution
+                    \Log::error('Failed to delete team member image: ' . $e->getMessage());
+                }
+            }
+        }
+        
+        // Delete the team member
+        $team->delete();
 
-        return redirect('admin/team')->with('flash_message', 'Team deleted!');
+        return redirect('admin/team')
+            ->with('success', 'Team member deleted successfully!');
     }
 }
