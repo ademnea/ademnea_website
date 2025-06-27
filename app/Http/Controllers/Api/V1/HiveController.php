@@ -32,6 +32,10 @@ class HiveController extends Controller
         $user = $request->user();
 
         // Get the farmer associated with the user
+        if (!$user->farmer) {
+            return response()->json(['error' => 'User is not associated with a farmer'], 403);
+        }
+        
         $farmer = $user->farmer;
 
         // Check if the farmer is the owner of the farm
@@ -68,6 +72,11 @@ class HiveController extends Controller
         }
 
         $user = $request->user();
+        
+        if (!$user->farmer) {
+            return response()->json(['error' => 'User is not associated with a farmer'], 403);
+        }
+        
         $farmer = $user->farmer;
 
         if ($farmer->id !== $hive->farm->ownerId) {
@@ -316,5 +325,68 @@ class HiveController extends Controller
         ];
 
         return response()->json($currentStatus);
+    }
+
+    // add hive, delete hive, update hive, hive management functions
+    public function addHive(Request $request, $farm_id)
+    {
+        $farm = Farm::find($farm_id);
+
+        if (!$farm) {
+            return response()->json(['error' => 'Farm not found'], 404);
+        }
+
+        // Get the currently authenticated user
+        $user = $request->user();
+
+        // Get the farmer associated with the user
+        if (!$user->farmer) {
+            return response()->json(['error' => 'User is not associated with a farmer'], 403);
+        }
+        
+        $farmer = $user->farmer;
+
+        // Check if the farmer is the owner of the farm
+        if ($farmer->id !== $farm->ownerId) {
+            return response()->json(['error' => 'Access denied'], 403);
+        }
+
+        $hive = new Hive();
+        $hive->longitude = $request->input('longitude');
+        $hive->latitude = $request->input('latitude');
+        $hive->farm_id = $farm_id;
+        $hive->save();
+
+        return response()->json(['message' => 'Hive added successfully', 'hive' => $hive], 201);
+    }
+
+    public function deleteHive(Request $request, $hive_id)
+    {
+        $hive = $this->checkHiveOwnership($request, $hive_id);
+
+        if ($hive instanceof Response) {
+            return $hive;
+        }
+
+        // Delete the hive
+        $hive->delete();
+
+        return response()->json(['message' => 'Hive deleted successfully'], 200);
+    }
+
+    public function updateHive(Request $request, $hive_id)
+    {
+        $hive = $this->checkHiveOwnership($request, $hive_id);
+
+        if ($hive instanceof Response) {
+            return $hive;
+        }
+
+        // Update the hive attributes
+        $hive->longitude = $request->input('longitude', $hive->longitude);
+        $hive->latitude = $request->input('latitude', $hive->latitude);
+        $hive->save();
+
+        return response()->json(['message' => 'Hive updated successfully', 'hive' => $hive], 200);
     }
 }
