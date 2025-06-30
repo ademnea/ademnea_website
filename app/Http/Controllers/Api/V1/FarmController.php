@@ -524,4 +524,67 @@ class FarmController extends Controller
 
 
 
+            /**
+             * Store a new farmer.
+             */
+            public function storeFarm(Request $request)
+            {
+                $validated = $request->validate([
+                    'ownerId' => 'required|integer',
+                    'name' => 'required|string|max:255',
+                    'district' => 'nullable|string|max:255',
+                    'address' => 'nullable|string|max:255',
+                    'latitude' => 'nullable|numeric',
+                    'logtitude' => 'nullable|numeric',
+                    'description' => 'nullable|string',
+                    
+                ]);
+
+                $farm = Farm::create($validated);
+
+                return response()->json($farm, 201);
+            }
+
+            /**
+             * Update an existing farmer.
+             */
+            public function updateFarm(Request $request, $id)
+            {
+                $farm = Farm::find($id);
+                if (!$farm) {
+                    return response()->json(['error' => 'Farm not found'], 404);
+                }
+
+                $validated = $request->validate([
+                    'ownerId' => 'sometimes|integer',
+                    'name' => 'sometimes|string|max:255',
+                    'district' => 'sometimes|string|max:255',
+                    'address' => 'sometimes|string|max:255',
+                    'latitude' => 'sometimes|numeric',
+                    'logtitude' => 'sometimes|numeric',
+                    'description' => 'sometimes|string|nullable',
+                ]);
+
+                $farm->update($validated);
+
+                return response()->json($farm);
+            }
+
+            /**
+             * Delete a farmer.
+             */
+            public function deleteFarm($id)
+            {
+                $farm = Farm::find($id);
+                if (!$farm) {
+                    return response()->json(['error' => 'Farm not found'], 404);
+                }
+
+                $farm->delete();
+
+                return response()->json(['message' => 'Farm deleted successfully']);
+            }
+
+
+
 }
