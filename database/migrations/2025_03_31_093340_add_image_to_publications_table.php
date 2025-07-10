@@ -13,15 +13,15 @@ class AddImageToPublicationsTable extends Migration
      */
     public function up()
     {
-        Schema::table('publications', function (Blueprint $table) {
-            $table->string('image')->nullable()->after('attachment');
-        });
+        // Schema::table('publications', function (Blueprint $table) {
+        //     $table->string('image')->nullable()->after('attachment');
+        // });
     }
     
     public function down()
     {
-        Schema::table('publications', function (Blueprint $table) {
-            $table->dropColumn('image');
-        });
+        // Schema::table('publications', function (Blueprint $table) {
+        //     $table->dropColumn('image');
+        // });
     }
 }

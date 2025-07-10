@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             FarmSeeder::class,
             HiveSeeder::class,
             HiveTemperatureSeeder::class,
+            TeamSeeder::class,
         ]);
     }
 }

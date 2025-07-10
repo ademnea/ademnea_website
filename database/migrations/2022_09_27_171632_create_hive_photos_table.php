@@ -13,34 +13,14 @@ class CreateHivePhotosTable extends Migration
      */
     public function up()
     {
-
-        // remove the duplicate photos
-        $duplicates = DB::table('hive_photos')
-                    ->select('path', 'hive_id', DB::raw('MIN(id) as keep_id'))
-                    ->groupBy('path', 'hive_id')
-                    ->having(DB::raw('COUNT(*)'), '>', 1)
-                    ->get();
-
-                foreach ($duplicates as $duplicate) {
-                    // Delete all except the one with the lowest ID
-                    DB::table('hive_photos')
-                        ->where('path', $duplicate->path)
-                        ->where('hive_id', $duplicate->hive_id)
-                        ->where('id', '!=', $duplicate->keep_id)
-                        ->delete();
-                }
-
         Schema::create('hive_photos', function (Blueprint $table) {
             $table->id();
-
             $table->string('path');
             $table->unsignedBigInteger('hive_id');
-
             $table->foreign('hive_id')
-            ->references('id')->on('hives')
-            ->onDelete(null)
-            ->nullable();
-
+                ->references('id')->on('hives')
+                ->onDelete(null)
+                ->nullable();
             $table->timestamps();
         });
     }
