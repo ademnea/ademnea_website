@@ -15,25 +15,18 @@ class HiveVideoController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function index(Request $request)
-    {
-        //$perPage = 30;
+            public function index(Request $request)
+            {
+                $hiveId = $request->query('hive_id');
 
-        //$videos = HiveVideo::latest()->paginate($perPage);
+                $videos = HiveVideo::with('latestBeeCount')
+                    ->where('hive_id', $hiveId)
+                    ->latest()
+                    ->paginate(8);
 
-        $hiveId = $request->query('hive_id');
-        // return $hiveId;
-       // $videos = HiveVideo::where('hive_id', $hiveId)->get();
+                return view('admin.hivedata.videos', compact('videos'));
+            }
 
-        $videos = HiveVideo::where('hive_id', $hiveId)
-        ->latest() // This orders the records by the created_at column in descending order (latest first).
-        ->paginate(8); // This limits the result to the latest 100 entries.
-        // ->get();
-
-
-        return view('admin.hivedata.videos', compact('videos'));
-
-    }
         /**
              * Clean up duplicate videos for a specific hive
              *

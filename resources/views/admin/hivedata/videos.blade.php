@@ -27,18 +27,19 @@
                 <li class="flex items-center space-x-4 py-2">
                     <div class="flex-shrink-0">
                         <a href="#">
-                            {{-- {{ URL("hivevideo/$video->path") }} --}}
                             <img src="{{ asset('thumbnail/thumbnail.jpeg') }}" data-video="{{ $video->path }}" alt="Video Thumbnail" class="w-16 h-12">
                         </a>
                     </div>
                     <div>
-                        <a href="#" class="block hover:bg-gray-200 px-2 py-1 rounded playlist-item" data-video="{{ $video->path }}">{{ $video->created_at }}</a>
-                        {{-- <p class="text-xs text-gray-500">{{ $video->created_at }}</p> --}}
+                        <a href="#" class="block hover:bg-gray-200 px-2 py-1 rounded playlist-item" data-video="{{ $video->path }}">
+                            {{ $video->created_at }}
+                        </a>
+                        <p class="text-sm text-gray-600">
+                            Bee Count: {{ optional($video->latestBeeCount)->bee_count ?? 0 }}
+                        </p>
                     </div>
                 </li>
-            @endforeach
-            
-
+                @endforeach
             </ul>
             {{ $videos->appends(['hive_id' => $hive_id])->links() }}
 
