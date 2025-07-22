@@ -100,6 +100,8 @@
         @include('website.contact')
         <!-- End Contact Section -->
 
+        <!-- ======= Map Section ======= -->
+        @include('website.map')
     </main><!-- End #main -->
 
     <!-- ======= Footer ======= -->

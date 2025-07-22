@@ -34,4 +34,18 @@ class HiveVideo extends Model
     {
         return $this->belongsTo(Hive::class);
     }
+
+        // HiveVideo.php
+
+        public function beeCounts()
+        {
+            return $this->hasMany(BeeCount::class, 'hive_video_id');
+        }
+
+        public function latestBeeCount()
+        {
+            return $this->hasOne(BeeCount::class, 'hive_video_id')->latestOfMany();
+        }
+
+
 }

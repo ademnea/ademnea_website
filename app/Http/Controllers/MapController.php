@@ -3,25 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\DB;
-use Response;
-
 
 class MapController extends Controller
 {
-    // Controller responsible for displaying newsletters
-    // public function displayMap()
-    // {
-    //     return view('admin.map.index');
-    // }
-
-    public function displayMap($id)
+    public function displayMap()
     {
-        $hives = DB::table('hives')->where('farm_id', $id)->get();
-        $farm = DB::table('farms')->where('id', $id)->get();
+        $hives = DB::table('hives')->get(); // get all hives
+        $farms = DB::table('farms')->get(); // get all farms (if needed)
 
-        return view('admin.map.index', compact('farm', 'hives'));
+        return view('website.map', compact('hives', 'farms')); // update the view path as needed
     }
-    
 }
