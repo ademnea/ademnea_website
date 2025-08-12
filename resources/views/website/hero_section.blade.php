@@ -6,7 +6,7 @@
         <div class="carousel-inner" role="listbox">
 
             
-            <!-- <div class="carousel-item active" style="background-image: url(assets/img/slide/bee.jpg)">
+            <div class="carousel-item active" style="background-image: url(assets/img/slide/bee.jpg)">
                 <div class="carousel-container">
                     <div class="container">
                         <h2 class="animate__animated animate__fadeInDown">Sensors and signal processing </h2>
@@ -50,121 +50,11 @@
                     </div>
                 </div>
             </div>
-        </div> -->
-
-            <!-- Adding contents for the Ademnea Workshop -->
-                    <!-- Slide 1-->
-           <div class="carousel-item active" style="background-image: url(assets/img/slide/day1.jpeg)">
-                <div class="carousel-container">
-                    <div class="container">
-                        <h2 class="animate__animated animate__fadeInDown text-start">AdEMNEA Project Machine Learning Workshop - Day 1 </h2>
-                        <h3 class="animate__animated animate__fadeInDown text-white text-start" style="font-size: 1.8rem;">
-                            Introduction to machine learning, Tools and libraries for Machine learning
-                        </h3>
-
-                        <p class="animate__animated animate__fadeInUp text-start">What it is, Why, machines learning type-
-                        Supervised Vs unsupervised learning Vs,
-                        reinforcement learning, Machine learning Vs
-                        deep learning, Modalities of deep learning
-                        such as transfer learning etc. ML Project
-                        pipeline.</p>
-                        <p class ="text-start">Practical assignment?</p>
-                        <p class ="text-start">Installation and interact with the ML tools
-                        required such as Pandas, pytorch, openCV
-                        etc.</p>
-                        <!-- <a href="/workpackages-wp3" class="btn-get-started animate__animated animate__fadeInUp scrollto">Read
-                            More</a> -->
-                    </div>
-                </div>
             </div>
-
-
-                            <!-- Slide 2-->
-            <div class="carousel-item " style="background-image: url(assets/img/slide/day2.jpeg)">
-                <div class="carousel-container">
-                    <div class="container">
-                        <h2 class="animate__animated animate__fadeInDown text-start" >AdEMNEA Project Machine Learning Workshop - Day 2</h2>
-                        <h3 class="animate__animated animate__fadeInDown text-white text-start" style="font-size: 1.8rem;">
-                            Datasets, Machine learning models and Model selection
-                        </h3>
-
-                        <p class="animate__animated animate__fadeInUp text-start">What is the nature of the ML problem?
-                        What are the different dataset formats
-                        available? What analytic and visualization
-                        tools suitable for different dataset formats,
-                        What ML type and models are suitable for
-                        the ML problem at hand and why? What
-                        performance metrics are needed etc.</p>
-                        <p class ="text-start">Practical assignment?</p>
-                        <p class ="text-start">Interact with different datasets and formats,
-                        do data cleaning and processing, and model
-                        interaction.</p>
-                        <!-- <a href="/workpackages-wp3" class="btn-get-started animate__animated animate__fadeInUp scrollto">Read
-                            More</a> -->
-                    </div>
-                </div>
-            </div>
-
-   
-
-                            <!-- Slide 3-->
-        <div class="carousel-item " style="background-image: url(assets/img/slide/day3.jpeg)">
-                <div class="carousel-container">
-                    <div class="container">
-                        <h2 class="animate__animated animate__fadeInDown text-start">AdEMNEA Project Machine Learning Workshop - Day 3</h2>
-                        <h3 class="animate__animated animate__fadeInDown text-white text-start" style="font-size: 1.8rem;">
-                            Cloud Platforms for Machine learning
-                        </h3>
-
-                        <p class="animate__animated animate__fadeInUp text-start">How to work and communicating with cloud
-                        platforms such as AWS, AZURE, Google
-                        cloud, etc.</p>
-                        <p class ="text-start">Practical assignment?</p>
-                        <p class ="text-start">Participants try to interact with the platform
-                        to see how they can push their projects to
-                        the platforms
-                        etc.</p>
-                        <!-- <a href="/workpackages-wp3" class="btn-get-started animate__animated animate__fadeInUp scrollto">Read
-                            More</a> -->
-                    </div>
-                </div>
             </div>
         </div>
-       
-                            <!-- >
-            <div class="carousel-item" style="background-image: url(assets/img/slide/analytics.jpg)">
-                <div class="carousel-container">
-                    <div class="container">
-                        <h2 class="animate__animated animate__fadeInDown">AdEMNEA Project Machine Learning Workshop - Day 4</h2>
-                        <p class="animate__animated animate__fadeInUp">This work focuses on documenting the insect
-                            pollinator species diversity and abundance across different agricultural landscapes. As well
-                            as their health status all aimed at contributing towards their conservation through
-                            identification of biodiversity hotspots in the region. Insect pollinators such as bees are
-                            very important in the East African cropping system since them pollinator crops and generate
-                            incomes through their product sales.</p>
-                        <a href="/workpackages-wp3" class="btn-get-started animate__animated animate__fadeInUp scrollto">Read
-                            More</a>
-                    </div>
-                </div>
-            </div>
-  
 
-                            
-            <div class="carousel-item" style="background-image: url(assets/img/slide/analytics.jpg)">
-                <div class="carousel-container">
-                    <div class="container">
-                        <h2 class="animate__animated animate__fadeInDown">AdEMNEA Project Machine Learning Workshop - Day 5 </h2>
-                        <p class="animate__animated animate__fadeInUp">This work focuses on documenting the insect
-                            pollinator species diversity and abundance across different agricultural landscapes. As well
-                            as their health status all aimed at contributing towards their conservation through
-                            identification of biodiversity hotspots in the region. Insect pollinators such as bees are
-                            very important in the East African cropping system since them pollinator crops and generate
-                            incomes through their product sales.</p>
-                        <a href="/workpackages-wp3" class="btn-get-started animate__animated animate__fadeInUp scrollto">Read
-                            More</a>
-                    </div>
-                </div>
-            </div> -->
+          
         </div>
 
         <a class="carousel-control-prev" href="#heroCarousel" role="button" data-bs-slide="prev">
