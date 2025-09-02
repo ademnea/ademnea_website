@@ -18,7 +18,6 @@ use App\Http\Controllers\Admin\GalleryInternController;
 use App\Http\Controllers\Admin\VOCController;
 
 
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -128,7 +127,6 @@ Route::get('/hive_data/hiveVibration_data_default/{hive_id}',[App\Http\Controlle
 
 
 
-
 Route::get('/individual_newsletter/{id}', [App\Http\Controllers\DisplayIndividualNewsletterController::class, 'show']);
 
 Route::get('displaynewsletter', [App\Http\Controllers\DisplayNewsletterController::class, 'displayNewsletter']);
@@ -142,7 +140,6 @@ Route::get('/displayscholarships', [ScholarshipDisplayController::class, 'index'
 Route::get('/scholarships/{id}', [ScholarshipsController::class, 'show'])->name('scholarships.show');
 Route::get('/scholarship/download-instructions/{id}', [ScholarshipDisplayController::class, 'downloadInstructionsPdf'])
     ->name('scholarship.downloadInstructions');
-
 
 
 // Route::get('/mastersscholarship-uganda', [App\Http\Controllers\Admin\MastersController::class, 'uganda'])->name('mastersscholarship-uganda');
@@ -236,7 +233,6 @@ Route::post('/generate-local-report', [DataReportController::class, 'generateRep
 Route::get('/displaygallery', [GalleryController::class, 'index'])->name('gallery.display');
 // routes/web.php
 // Route::get('/displayevent', [GalleryController::class, 'index']);
-
 
 
 Route::get('/events', [EventController::class, 'index'])->name('events.index');

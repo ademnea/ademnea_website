@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
 
-
 import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.stats import pearsonr
 import os
+from scipy.stats import pearsonr
 
-def analyze_humidity_for_month_year(df_humidity, df_weight, df_temperature, year, month, output_dir=None):
-    # Ensure output_dir exists
-    if output_dir is None:
-        output_dir = "."
+def analyze_humidity_for_month_year(df_humidity, df_weight, df_temperature, year, month, report_folder):
     df_humidity.index = pd.to_datetime(df_humidity.index)
     df_humidity['year'] = df_humidity.index.year
     df_humidity['month'] = df_humidity.index.month
@@ -18,21 +14,12 @@ def analyze_humidity_for_month_year(df_humidity, df_weight, df_temperature, year
     if df_humidity_filtered.empty:
         return {"Year": year, "Month": month, "Error": f"No data available for {year}-{month:02d}"}
     
-    # Plot humidity trends
-    if output_dir is None:
-        output_dir = "."
+    # Plot humidity trends and save to report folder
     plt.figure(figsize=(10, 6))
-    df_humidity_filtered[['Interior (%)', 'Exterior (%)']].plot(
-        title=f"Humidity Trend for {year}-{month:02d}",
-        xlabel="Date",
-        ylabel="Humidity (%)"
-    )
+    df_humidity_filtered[['Interior (%)', 'Exterior (%)']].plot(title=f"Humidity Trend for {year}-{month:02d}", xlabel="Date", ylabel="Humidity (%)")
     plt.grid(True)
-    plot_path = os.path.join(output_dir, "humidity_trend.png")
-    plot_path = os.path.join(output_dir, "humidity_trend.png")
-    plt.savefig(plot_path)
-    plt.close()
-    print(f"Saved humidity plot to: {plot_path}")  # Optional
+    plt.savefig(os.path.join(report_folder, "humidity_trend.png"))
+    plt.close()  # Close figure to free memory
     
     # Calculate statistics
     interior_avg = round(df_humidity_filtered['Interior (%)'].mean(), 2)
