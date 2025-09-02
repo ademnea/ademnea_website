@@ -57,3 +57,4 @@ composer.lock
 database_backup.sql
 storage/scripts/venv/
 MODULES/report_scripts/venv/
+MODULES/venv/

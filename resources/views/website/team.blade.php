@@ -3,9 +3,17 @@
 # Team Section
 --------------------------------------------------------------*/
 .team .team-member .member-img {
-  border-radius: 8px;
-  overflow: hidden;
-  /* max-width: 300px; */
+  height: 250px; /* Or your desired fixed height */
+  display: flex; /* To center the image vertically if needed */
+  align-items: center; /* To center the image vertically if needed */
+  justify-content: center; /* To center the image horizontally if needed */
+  overflow: hidden; /* Ensure image overflow is hidden */
+}
+.team .team-member .member-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px; /* Added for rounded corners */
 }
 .team .team-member .social {
   position: absolute;
@@ -68,6 +76,7 @@
   font-size: 14px;
   line-height: 26px;
   color: #6c757d;
+  text-align: left; /* Added for left alignment */
 }
 .team .team-member:hover .social {
   opacity: 1;
