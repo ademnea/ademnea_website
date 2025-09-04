@@ -25,4 +25,7 @@ jobs:
       run: |
         sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << EOF
           cd $REMOTE_PATH
-          git pull origin master
+          # Fetch latest master and reset local files to match exactly
+          git fetch origin master
+          git reset --hard origin/master
+
