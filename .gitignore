@@ -58,3 +58,6 @@ database_backup.sql
 storage/scripts/venv/
 MODULES/report_scripts/venv/
 MODULES/venv/
+MODULES/generated_report/
+bootstrap/cache/.gitignore
+storage/debugbar/.gitignore
