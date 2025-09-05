@@ -61,3 +61,7 @@ MODULES/venv/
 MODULES/generated_report/
 bootstrap/cache/.gitignore
 storage/debugbar/.gitignore
+
+MODULES/generated_report/
+bootstrap/cache/
+storage/debugbar/
