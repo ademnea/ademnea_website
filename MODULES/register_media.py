@@ -1,5 +1,5 @@
-                                #THIS FILE CONTAINS COMMON FUNCTIONS REQUIRED 
-                                #IN REGISTER_HIVEMEDIA FILES(media = audios, images, videos)
+ #THIS FILE CONTAINS COMMON FUNCTIONS REQUIRED 
+ #IN REGISTER_HIVEMEDIA FILES(media = audios, images, videos)
 import os
 import time
 import mysql.connector
