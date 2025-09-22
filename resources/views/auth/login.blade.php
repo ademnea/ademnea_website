@@ -75,7 +75,7 @@
                         <div class="contact100-form-checkbox">
                             <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
                             <label class="label-checkbox100" for="ckb1">
-                                Remember http://127.0.0.1:8000/Sign%20upme
+                                Remember me
                             </label>
                         </div>
 
