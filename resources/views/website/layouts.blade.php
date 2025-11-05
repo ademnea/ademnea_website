@@ -104,7 +104,7 @@
         <!-- End Portfolio Section -->
 
         <!-- ======= Team Section ======= -->
-        @include('website.team')
+        
         <!-- End Team Section -->
 
         <!-- ======= Contact Section ======= -->
@@ -112,7 +112,7 @@
         <!-- End Contact Section -->
 
         <!-- ======= Map Section ======= -->
-        @include('website.map')
+       
     </main><!-- End #main -->
 
     <!-- ======= Footer ======= -->

@@ -33,6 +33,17 @@ class TeamController extends Controller
         return view('admin.team.index', compact('team'));
     }
 
+    public function team()
+    {
+        // Fetch researchers and interns from the same Team model you already use
+        $researchers = Team::where('title', 'Researcher')->get();
+        $phdStudents = Team::where('title', 'PhD Student')->get();
+        $interns = Team::where('title', 'Intern')->get();
+
+        // Return the blade view you already have (resources/views/website/team.blade.php)
+        return view('website.team', compact('researchers', 'phdStudents', 'interns'));
+    }
+
     /**
      * Show the form for creating a new resource.
      *

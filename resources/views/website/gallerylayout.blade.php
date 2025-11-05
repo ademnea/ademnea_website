@@ -59,6 +59,7 @@
     <main id="main">
                     <!-- ======= Album Section ======= -->
       <section id="gallery" class="gallery">
+        
           <div class="container">
                   <div class="section-title">
                     <h2>Gallery</h2>

@@ -46,26 +46,23 @@
                         </td>
                         <td class="px-6 py-4 action-links">
                             <!-- Modal toggle -->
-                            <a href="#"
-                               style="color: white; background-color: #28a745; width: auto; height: 30px; padding: 5px; border-radius: 5px;"
-                                type="button" data-modal-target="large-modal" data-modal-show="large-modal"
-                                class="">View</a>
-                            <a href="#"
-                               style="color: white; background-color:  #ffc107; width: auto; height: 30px; padding: 5px; border-radius: 5px;"
-                                type="button" data-modal-target="{{ $item->id }}" data-modal-show="{{ $item->id }}"
-                                class="">Edit Farm</a>
-
-                            <a href="/admin/hive?farm_id={{ $item->id }}"
-                               style="color: white; background-color: #007bff; width: auto; height: 30px; padding: 5px; border-radius: 5px;"
-                                type="button" class="">Hives</a>
-                            <a href="#"
-                                style="color: white; background-color:  #dc3545; width: auto; height: 30px; padding: 5px; border-radius: 5px;"
-                                type="button" data-modal-target="popup-modal" data-modal-show="popup-modal"
-                                class="">Delete</a>
-
-                            <a href="{{ url('/farms/map/' . $item->id) }}"
-                               style="color: white; background-color:   #343a40; width: auto; height: 30px; padding: 5px; border-radius: 5px;"
-                                type="button" class="">Map</a>
+                            <div class="flex space-x-2">
+                                <a href="#" style="color: white; background-color: #28a745; padding: 8px; border-radius: 5px;" type="button" data-modal-target="large-modal" data-modal-show="large-modal" class="inline-flex items-center" title="View">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path></svg>
+                                </a>
+                                <a href="#" style="color: white; background-color: #ffc107; padding: 8px; border-radius: 5px;" type="button" data-modal-target="{{ $item->id }}" data-modal-show="{{ $item->id }}" class="inline-flex items-center" title="Edit">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg>
+                                </a>
+                                <a href="/admin/hive?farm_id={{ $item->id }}" style="color: white; background-color: #007bff; padding: 8px; border-radius: 5px;" type="button" class="inline-flex items-center" title="Hives">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path></svg>
+                                </a>
+                                <a href="#" style="color: white; background-color: #dc3545; padding: 8px; border-radius: 5px;" type="button" data-modal-target="popup-modal" data-modal-show="popup-modal" class="inline-flex items-center" title="Delete">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clip-rule="evenodd"></path><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414L7.586 12l-1.293 1.293a1 1 0 101.414 1.414L9 13.414l2.293 2.293a1 1 0 001.414-1.414L11.414 12l1.293-1.293z" clip-rule="evenodd"></path></svg>
+                                </a>
+                                <a href="{{ url('/farms/map/' . $item->id) }}" style="color: white; background-color: #343a40; padding: 8px; border-radius: 5px;" type="button" class="inline-flex items-center" title="Map">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+                                </a>
+                            </div>
 
                         </td>
                     </tr>

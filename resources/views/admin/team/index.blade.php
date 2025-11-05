@@ -14,9 +14,9 @@
                <th scope="col" class="px-6 py-3">
                    Position
                </th>
-               <!-- <th scope="col" class="px-6 py-3">
-                   Description
-               </th> -->
+               <th scope="col" class="px-6 py-3">
+                   Bio
+               </th>
                <th scope="col" class="px-6 py-3">
                    Action
                </th>
@@ -36,17 +36,23 @@
                <td class="px-6 py-4">
                {{ $item->title }}
                </td>
-               <!-- <td class="px-6 py-4">
+               <td class="px-6 py-4">
                    <div class="flex items-center">
                    <details><summary>{{ $item->name }}'s description</summary>{{ $item->description }}</details>
                    </div>
-               </td> -->
+               </td>
                <td class="px-6 py-4">
-                   <!-- Modal toggle -->
-                   <a href="#" type="button" data-modal-target="view-{{ $item->id }}" data-modal-show="view-{{ $item->id }}" style="color: white; background-color:  #28a745; width: auto; height: 30px; padding: 5px; border-radius: 5px;"  class="">View</a>
-                   <a href="#" type="button" data-modal-target="edit-{{ $item->id }}" data-modal-show="edit-{{ $item->id}}" style="color: white; background-color: #ffc107; width: auto; height: 30px; padding: 5px; border-radius: 5px;"  class="">Edit</a>
-                   <a href="#" type="button" data-modal-target="delete-{{ $item->id }}" data-modal-show="delete-{{ $item->id}}" style="color: white; background-color:  #dc3545; width: auto; height: 30px; padding: 5px; border-radius: 5px;"  class="">Delete</a>
-                                      
+                   <div class="flex space-x-2">
+                       <a href="#" type="button" data-modal-target="view-{{ $item->id }}" data-modal-show="view-{{ $item->id }}" style="color: white; background-color: #28a745; padding: 8px; border-radius: 5px;" class="inline-flex items-center">
+                           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path></svg>
+                       </a>
+                       <a href="#" type="button" data-modal-target="edit-{{ $item->id }}" data-modal-show="edit-{{ $item->id}}" style="color: white; background-color: #ffc107; padding: 8px; border-radius: 5px;" class="inline-flex items-center">
+                           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd"></path></svg>
+                       </a>
+                       <a href="#" type="button" data-modal-target="delete-{{ $item->id }}" data-modal-show="delete-{{ $item->id}}" style="color: white; background-color: #dc3545; padding: 8px; border-radius: 5px;" class="inline-flex items-center">
+                           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" clip-rule="evenodd"></path><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414L7.586 12l-1.293 1.293a1 1 0 101.414 1.414L9 13.414l2.293 2.293a1 1 0 001.414-1.414L11.414 12l1.293-1.293z" clip-rule="evenodd"></path></svg>
+                       </a>
+                   </div>
                </td>
            
          
@@ -82,11 +88,12 @@
                             <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
                             <select name="title" id="title" required class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500">
                                 <option value="Researcher" selected>Researcher</option>
+                                <option value="PhD Student">PhD Student</option>
                                 <option value="Intern">Intern</option>
                             </select>
                         </div>
                        <div class="col-span-6 sm:col-span-6">
-                           <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Research Interests</label>
+                           <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Interests</label>
                            <textarea id="description" name="description" rows="4" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Write your thoughts here..."></textarea>
                        </div>
                        <div class="col-span-6 sm:col-span-6">
@@ -111,7 +118,7 @@
    <div id="edit-{{ $item->id}}" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 items-center justify-center hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
        <div class="relative w-full max-w-2xl max-h-full">
            <!-- Modal content -->
-           <form method="POST" action="{{ url('/admin/team/' . $item->id) }} accept-charset="UTF-8" enctype="multipart/form-data"   class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+           <form method="POST" action="{{ url('/admin/team/' . $item->id) }}" accept-charset="UTF-8" enctype="multipart/form-data" class="relative bg-white rounded-lg shadow dark:bg-gray-700">
            {{ method_field('PATCH') }}
            {{ csrf_field() }}
                <!-- Modal header -->
@@ -130,10 +137,18 @@
                            <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
                            <input type="text" name="name" id="name" value="{{ old('name', $item->name) }}" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Bonnie" required="">
                        </div>
-                       <div class="col-span-6 sm:col-span-3">
-                           <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
-                           <input type="text" name="title" value="{{ old('title', $item->title) }}" id="title" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Green" required="">
-                       </div>
+                      <div class="col-span-6 sm:col-span-3">
+                        <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
+                        <select name="title" id="title" required
+                            class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500">
+
+                            <option value="Researcher" {{ $item->title == 'Researcher' ? 'selected' : '' }}>Researcher</option>
+                            <option value="PhD Student" {{ $item->title == 'PhD Student' ? 'selected' : '' }}>PhD Student</option>
+                            <option value="Intern" {{ $item->title == 'Intern' ? 'selected' : '' }}>Intern</option>
+
+                        </select>
+                    </div>
+
                        <div class="col-span-6 sm:col-span-6">
                            <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
                            <textarea class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"  rows="5" name="description" type="textarea" id="description" >{{ old('description', $item->description) }}</textarea>
@@ -294,17 +309,8 @@ document.getElementById("back-button").addEventListener("click", function() {
             contentType: false,
             success: function(response) {
                 // Handle the successful response
-                // Update the table with the new row
-                var table = $('#myTable').DataTable(); // Use the updated ID for the table
-                table.row.add([
-                    // Add the data to the new row in the table
-                    response.name,
-                    response.position,
-                    response.description,
-                    '<a href="#" type="button" data-modal-target="'+ response.id + '" data-modal-toggle="'+ response.id + '" class="font-medium text-green-600 dark:text-green-500 hover:underline">View</a>' +
-                    ' | <a href="#" type="button" data-modal-target="'+ response.id + '" data-modal-show="'+ response.id + '" class="font-medium text-green-600 dark:text-green-500 hover:underline">Edit</a>' +
-                    ' | <a href="#" type="button" data-modal-target="'+ response.id + '" data-modal-toggle="'+ response.id + '" class="font-medium text-red-600 dark:text-blue-500 hover:underline">Delete</a>'
-                ]).draw(false);
+                // Reload the page to show the new data
+                window.location.reload();
 
                 // Reset the form
                 $('#addTeamForm')[0].reset();
