@@ -12,22 +12,23 @@ use App\Models\Event;
 
 class WebsiteController extends Controller
 {
-    public function index(){
+  public function index()
+    {
         $gallery = Gallery::all();
         $researchers = Team::where('title', 'Researcher')->get();
         $interns = Team::where('title', 'Intern')->get();
+        $phdStudents = Team::where('title', 'PhD Student')->get();
         $events = Event::latest()->get();
-
-
-        
 
         return view('website.layouts', [
             'researchers' => $researchers,
             'interns' => $interns,
+            'phdStudents' => $phdStudents,
             'gallery' => $gallery,
-            'events' => $events, // ✅ Now it's passed to the view!
+            'events' => $events,
         ]);
     }
+
 
     public function sudan(){
         $profile = ResearchProfile::where('category', 'masters')->where('country', 'sudan')->get();

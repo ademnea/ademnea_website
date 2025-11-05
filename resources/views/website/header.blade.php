@@ -9,7 +9,7 @@
         <nav id="navbar" class="navbar">
             <ul>
                 <li><a class="nav-link scrollto active" href="/">Home</a></li>
-                <li class="dropdown"><a href="/#"><span>Work Packages</span> <i class="bi bi-chevron-down"></i></a>
+                <!-- <li class="dropdown"><a href="/#"><span>Work Packages</span> <i class="bi bi-chevron-down"></i></a>
                     <ul>
 
                         <li><a href="/workpackages-wp1">Networks and Resilience(WP1)</a></li>
@@ -17,7 +17,9 @@
                         <li><a href="/workpackages-wp3">Data Analytics for Environment Monitoring services(WP3)</a></li>
                         <li><a href="/workpackages-wp4">Project Administration(WP4)</a></li>
                     </ul>
-                </li>
+                </li> -->
+
+                 <li><a class="nav-link" href="{{ route('map') }}">Apiary Map</a></li>
 
                 <!-- <li class="dropdown scrollto dropdown"><a href="/" class="nav-link scrollto"><span>Research
                             Profile</span> <i class="bi bi-chevron-down"></i></a>
@@ -95,7 +97,7 @@
                 {{-- </ul> --}}
                 {{-- </li> --}}
 
-                <li><a class="nav-link scrollto" href="/#team">Team</a></li>
+                <li><a class="nav-link" href="{{ route('team') }}">Team</a></li>
                 <li><a class="nav-link scrollto" href="/login">Login</a></li>
             </ul>
             <i class="bi bi-list mobile-nav-toggle"></i>

@@ -16,6 +16,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\Admin\GalleryInternController;
 use App\Http\Controllers\Admin\VOCController;
+use App\Http\Controllers\Admin\TeamController;
 
 
 /*
@@ -240,3 +241,6 @@ Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show'
 
 // Gallery interns 
 Route::resource('admin/gallery_interns', \App\Http\Controllers\Admin\GalleryInternController::class);
+
+#team page route
+Route::get('team', [TeamController::class, 'team'])->name('team');
