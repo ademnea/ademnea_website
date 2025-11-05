@@ -25,7 +25,7 @@ class ScholarshipDisplayController extends Controller
 public function downloadInstructionsPdf($id)
 {
     // You can use the ID if each scholarship has its own PDF file (optional)
-    $filename = 'AdEMNEA Work Package 2 TASK 2.4 SCHOLARSHIP CALL.pdf';
+    $filename = 'AdEMNEA Work Package 3.2 TASK 3.2.1 SCHOLARSHIP CALL.pdf';
 
     // Since the file is inside the public directory
     $path = public_path('scholarship/' . $filename);
