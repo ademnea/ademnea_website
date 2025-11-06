@@ -46,7 +46,7 @@
 
 <div class="form-group">
     <label for="name" class="control-label">{{ 'Name' }}</label>
-    <input class="form-control @error('name') is-invalid @enderror" value="{{old('name')}}" name="name" type="text" id="name" value="{{ isset($team->name) ? $team->name : ''}}" >
+    <input class="form-control @error('name') is-invalid @enderror" name="name" type="text" id="name" value="{{ old('name', isset($team->name) ? $team->name : '') }}" >
     @error('name')
         <div class="invalid-feedback text-sm alert">
             {{ $message }}
@@ -56,7 +56,7 @@
 
 <div class="form-group">
     <label for="title" class="control-label">{{ 'Title' }}</label>
-    <input class="form-control @error('title') is-invalid @enderror" value="{{old('title')}}" name="title" type="text" id="title" value="{{ isset($team->title) ? $team->title : ''}}" >
+    <input class="form-control @error('title') is-invalid @enderror" name="title" type="text" id="title" value="{{ old('title', isset($team->title) ? $team->title : '') }}" >
     @error('title')
         <div class="invalid-feedback text-sm">
             {{ $message }}
@@ -65,7 +65,7 @@
 </div>
 <div class="form-group">
     <label for="description" class="control-label">{{ 'Research Interests' }}</label>
-    <textarea class="form-control @error('description') is-invalid @enderror" value="{{old('description')}}" rows="5" name="description" type="textarea" id="description" >{{ isset($team->description) ? $team->description : ''}}</textarea>
+    <textarea class="form-control @error('description') is-invalid @enderror" rows="5" name="description" id="description">{{ old('description', isset($team->description) ? $team->description : '') }}</textarea>
     @error('description')
         <div class="invalid-feedback mt-2 text-sm">
             {{ $message }}

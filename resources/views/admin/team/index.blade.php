@@ -79,6 +79,15 @@
                </div>
                <!-- Modal body -->
                <div class="p-6 space-y-6">
+                   @if ($errors->any())
+                   <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                       <ul>
+                           @foreach ($errors->all() as $error)
+                               <li>{{ $error }}</li>
+                           @endforeach
+                       </ul>
+                   </div>
+                   @endif
                    <div class="grid grid-cols-6 gap-6">
                        <div class="col-span-6 sm:col-span-3">
                            <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
@@ -97,8 +106,8 @@
                            <textarea id="description" name="description" rows="4" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-600 focus:border-green-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500" placeholder="Write your thoughts here..."></textarea>
                        </div>
                        <div class="col-span-6 sm:col-span-6">
-                           <label for="image" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Image(jpg, peg & png only allowed)</label>
-                           <input name="image"  class="block w-full text-sm text-gray-900 border shadow-sm bg-gray-50 border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="image" type="file" multiple>
+                           <label for="image" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Image (jpg, png & jpeg only, max 20MB)</label>
+                           <input name="image" class="block w-full text-sm text-gray-900 border shadow-sm bg-gray-50 border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="image" type="file" required>
                        </div>
                        
                    </div>
@@ -296,41 +305,7 @@ document.getElementById("back-button").addEventListener("click", function() {
    // Redirect to the team page
    window.location.href = "{{ url('admin/team') }}"; // Replace with the actual URL of the team page
 });
-  // Handle form submission
-  $('#addTeamForm').on('submit', function(event) {
-        event.preventDefault(); // Prevent the form from submitting normally
 
-        // Perform an AJAX request to save the data
-        $.ajax({
-            url: $(this).attr('action'), // Form action URL
-            method: $(this).attr('method'), // Form method (e.g., POST)
-            data: new FormData(this), // Form data
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                // Handle the successful response
-                // Reload the page to show the new data
-                window.location.reload();
-
-                // Reset the form
-                $('#addTeamForm')[0].reset();
-
-                // Close the modal or perform any other necessary actions
-                // ...
-
-                // Display a success message
-                $('#addTeamForm').append('<div class="text-green-600">Successfully added a new member.</div>');
-
-                // Remove the success message after a few seconds
-                setTimeout(function() {
-                    $('.text-green-600').remove();
-                }, 3000);
-
-                // Redirect to the team page
-                window.location.href = "/admin/team";
-            }
-        });
-    });
 </script>
 @endsection
 
