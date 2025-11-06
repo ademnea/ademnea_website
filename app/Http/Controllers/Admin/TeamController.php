@@ -64,20 +64,22 @@ class TeamController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'name'=>'required|max:255',
-            'title'=>'required|max:255',
+            'title'=>'required|max:255', 
             'description'=>'required',
-            'image'=>'required|mimes:jpg,png,jpeg|max:5048'
+            'image'=>'required|mimes:jpg,png,jpeg|max:20480'
         ]);
 
-        $newImageName = time() . '-' . $request->name . '.' . $request->image->extension();
+        $newImageName = time() . '-' . str_replace(' ', '_', $request->name) . '.' . $request->image->extension();
         $request->image->move(public_path('images'), $newImageName);
-        $requestData = $request->all();
-        $requestData['image_path'] = $newImageName;
-
         
-        Team::create($requestData);
+        Team::create([
+            'name' => $request->name,
+            'title' => $request->title,
+            'description' => $request->description,
+            'image_path' => $newImageName
+        ]);
 
         return redirect('admin/team')->with('flash_message', 'Team added!');
     }
