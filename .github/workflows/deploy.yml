@@ -29,3 +29,5 @@ jobs:
           git fetch origin master
           git reset --hard origin/master
 
+          echo "Deployment complete!"
+        EOF
