@@ -47,7 +47,7 @@ public function store(Request $request)
         'venue' => 'required|string|max:255',
         'date' => 'required|date',
         'description' => 'nullable|string',
-        'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // validate each image
+        'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:20048', // validate each image
     ]);
 
     // Create the gallery record

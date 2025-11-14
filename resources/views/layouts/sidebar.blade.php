@@ -117,6 +117,17 @@
                 </a>
             </li>
 
+           <li>
+            <a href="/admin/feedback" class="flex items-center p-2 text-white rounded-lg dark:text-black hover:bg-green-800 dark:hover:bg-white">
+                <svg class="w-6 h-6 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M7 8h10M7 12h6m-6 8l-4-4V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7z"/>
+                </svg>
+                <span class="ml-3">Feedback</span>
+            </a>
+            </li>
+
+
 
        </ul>
     </div>
