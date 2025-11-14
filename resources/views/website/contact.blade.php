@@ -36,32 +36,69 @@
             </div>
 
             <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
-                <form action="forms/contact.php" method="post" role="form" class="php-email-form">
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            <label for="name">Your Name</label>
-                            <input type="text" name="name" class="form-control" id="name" required>
+                <div class="contact-form-wrapper w-100">
+                    <div class="contact-form-header mb-4">
+                        <h3 class="mb-2">Send us a Message</h3>
+                        <p class="text-muted">We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+                    </div>
+                    
+                    <form action="{{ route('feedback.store') }}" method="post" role="form" class="contact-form">
+                        @csrf
+                        @if(session('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        @endif
+                        @if($errors->any())
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                @foreach($errors->all() as $error)
+                                    <div>{{ $error }}</div>
+                                @endforeach
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        @endif
+                        
+                        <div class="row">
+                            <div class="form-group col-md-6 mb-3">
+                                <label for="name" class="form-label fw-semibold">
+                                    Your Name
+                                </label>
+                                <input type="text" name="name" class="form-control form-control-lg" id="name" 
+                                       value="{{ old('name') }}" placeholder="" required>
+                            </div>
+                            <div class="form-group col-md-6 mb-3">
+                                <label for="email" class="form-label fw-semibold">
+                                    Your Email
+                                </label>
+                                <input type="email" class="form-control form-control-lg" name="email" id="email" 
+                                       value="{{ old('email') }}" placeholder="" required>
+                            </div>
                         </div>
-                        <div class="form-group col-md-6 mt-3 mt-md-0">
-                            <label for="name">Your Email</label>
-                            <input type="email" class="form-control" name="email" id="email" required>
+                        
+                        <div class="form-group mb-3">
+                            <label for="subject" class="form-label fw-semibold">
+                                Subject
+                            </label>
+                            <input type="text" class="form-control form-control-lg" name="subject" id="subject" 
+                                   value="{{ old('subject') }}" placeholder="" required>
                         </div>
-                    </div>
-                    <div class="form-group mt-3">
-                        <label for="name">Subject</label>
-                        <input type="text" class="form-control" name="subject" id="subject" required>
-                    </div>
-                    <div class="form-group mt-3">
-                        <label for="name">Message</label>
-                        <textarea class="form-control" name="message" rows="10" required></textarea>
-                    </div>
-                    <div class="my-3">
-                        <div class="loading">Loading</div>
-                        <div class="error-message"></div>
-                        <div class="sent-message">Your message has been sent. Thank you!</div>
-                    </div>
-                    <div class="text-center"><button type="submit">Send Message</button></div>
-                </form>
+                        
+                        <div class="form-group mb-4">
+                            <label for="message" class="form-label fw-semibold">
+                                Message
+                            </label>
+                            <textarea class="form-control" name="message" id="message" rows="8" 
+                                      placeholder="Write your message here..." required>{{ old('message') }}</textarea>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success btn-lg px-5 py-3">
+                                Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

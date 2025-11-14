@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use Illuminate\Support\Facades\DB;
 use App\Models\Gallery;
-use App\Models\event_photos;
-use App\Models\events;
+use App\Models\EventPhoto;
+use App\Models\Event;
 use Illuminate\Http\Request;
 
 class GalleryController extends Controller
@@ -49,7 +49,7 @@ class GalleryController extends Controller
     ]);
 
     //lets get the latest event and add this image to it.
-    $latestRecord = events::latest()->first();
+    $latestRecord = Event::latest()->first();
     $latestRecordId = $latestRecord->id;
 
     //now lets insert the images in the event images table.
@@ -60,7 +60,7 @@ class GalleryController extends Controller
        $picname = $file->getClientOriginalName();
        $file->move(public_path('images/events'), $picname);
 
-        $fileModel = new event_photos;
+        $fileModel = new EventPhoto;
         $fileModel->photo_url = $picname;
         $fileModel->event_id = $latestRecordId;
         $fileModel->save();          
@@ -99,13 +99,13 @@ class GalleryController extends Controller
     
     if ($request->hasFile('images')) {
         // Step 1: Retrieve the existing photos
-        $existingPhotos = event_photos::where('event_id', $id)->get();
+        $existingPhotos = EventPhoto::where('event_id', $id)->get();
     
         // Step 2: Delete the existing photos
         foreach ($existingPhotos as $existingPhoto) {
     
             // Delete the existing photo file from the server
-            unlink(public_path('images/events'.$existingPhoto->photo));
+            unlink(public_path('images/events/'.$existingPhoto->photo_url));
     
             // Delete the record from the database
             $existingPhoto->delete();
@@ -117,10 +117,8 @@ class GalleryController extends Controller
             $picname = $file->getClientOriginalName();
             $file->move(public_path('images/events'), $picname);
     
-            // Full path to the uploaded image
-    
-            // Create a new phone_photos model instance
-            $fileModel = new event_photos;
+            // Create a new EventPhoto model instance
+            $fileModel = new EventPhoto;
             $fileModel->event_id = $id;
             $fileModel->photo_url = $picname;
             $fileModel->save();

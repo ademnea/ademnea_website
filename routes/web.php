@@ -17,6 +17,7 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\Admin\GalleryInternController;
 use App\Http\Controllers\Admin\VOCController;
 use App\Http\Controllers\Admin\TeamController;
+use App\Http\Controllers\FeedbackController;
 
 
 /*
@@ -141,6 +142,15 @@ Route::get('/displayscholarships', [ScholarshipDisplayController::class, 'index'
 Route::get('/scholarships/{id}', [ScholarshipsController::class, 'show'])->name('scholarships.show');
 Route::get('/scholarship/download-instructions/{id}', [ScholarshipDisplayController::class, 'downloadInstructionsPdf'])
     ->name('scholarship.downloadInstructions');
+
+
+// Feedback routes
+Route::post('/feedback', [App\Http\Controllers\Admin\FeedbackController::class, 'store'])->name('feedback.store');
+
+Route::middleware('auth:web')->group(function () {
+    Route::get('/admin/feedback', [App\Http\Controllers\Admin\FeedbackController::class, 'index'])->name('admin.feedback');
+    Route::delete('/admin/feedback/{id}', [App\Http\Controllers\Admin\FeedbackController::class, 'destroy'])->name('feedback.destroy');
+});
 
 
 // Route::get('/mastersscholarship-uganda', [App\Http\Controllers\Admin\MastersController::class, 'uganda'])->name('mastersscholarship-uganda');
