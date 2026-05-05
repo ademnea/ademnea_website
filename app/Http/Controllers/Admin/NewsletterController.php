@@ -29,7 +29,7 @@ class NewsletterController extends Controller
                 ->orWhere('description', 'like', "%{$search}%");
         }
         
-        $newsletter = $query->paginate($perPage);
+        $newsletter = $query->orderByDesc('id')->paginate($perPage);
         
         return view('admin.newsletter.index', compact('newsletter'));
     }
@@ -56,8 +56,26 @@ class NewsletterController extends Controller
      */
     public function store(Request $request)
     {
-        $requestData = $request->all();
-        
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'nullable|string',
+            'article' => 'nullable|string',
+            'image' => 'required|image|mimes:jpg,jpeg,png,webp,gif|max:5120',
+        ]);
+
+        $requestData = $request->except('image');
+
+        if ($request->hasFile('image')) {
+            if (!File::exists(public_path('images/newsletters'))) {
+                File::makeDirectory(public_path('images/newsletters'), 0755, true);
+            }
+
+            $image = $request->file('image');
+            $imageName = time() . '_' . preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $image->getClientOriginalName());
+            $image->move(public_path('images/newsletters'), $imageName);
+            $requestData['image'] = 'images/newsletters/' . $imageName;
+        }
+
         Newsletter::create($requestData);
 
         return redirect('admin/newsletter')->with('flash_message', 'Article added!');
@@ -101,10 +119,32 @@ class NewsletterController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
-        $requestData = $request->all();
+        $request->validate([
+            'title' => 'required|string',
+            'description' => 'nullable|string',
+            'article' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:5120',
+        ]);
+
+        $requestData = $request->except('image');
         
         $newsletter = Newsletter::findOrFail($id);
+
+        if ($request->hasFile('image')) {
+            if ($newsletter->image && File::exists(public_path($newsletter->image))) {
+                File::delete(public_path($newsletter->image));
+            }
+
+            if (!File::exists(public_path('images/newsletters'))) {
+                File::makeDirectory(public_path('images/newsletters'), 0755, true);
+            }
+
+            $image = $request->file('image');
+            $imageName = time() . '_' . preg_replace('/[^A-Za-z0-9_\-\.]/', '_', $image->getClientOriginalName());
+            $image->move(public_path('images/newsletters'), $imageName);
+            $requestData['image'] = 'images/newsletters/' . $imageName;
+        }
+
         $newsletter->update($requestData);
 
         return redirect('admin/newsletter')->with('flash_message', 'Newsletter updated!');

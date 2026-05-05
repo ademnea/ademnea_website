@@ -83,8 +83,8 @@
                             </div> --}}
                             
                             @php
-                    use Illuminate\Support\Str;
-                @endphp
+                                use Illuminate\Support\Str;
+                            @endphp
 
                 @if ($newsletter->count())
                     <div class="container pt-5">
@@ -92,37 +92,22 @@
                             <h1 style="color:white">News about the project</h1>
                         </div>
                         <div class="row">
-                            @foreach ($newsletter as $workpackage)
+                            @foreach ($newsletter as $newsletterItem)
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="card mb-4 custom-card" style="background-color: white; border-radius: 30px; height: auto;">
+                                        @if(!empty($newsletterItem->image))
+                                            <img src="{{ asset($newsletterItem->image) }}" class="card-img-top" alt="{{ $newsletterItem->title }}" style="height: 220px; object-fit: cover; border-top-left-radius: 30px; border-top-right-radius: 30px;">
+                                        @endif
                                         <div class="card-body" style="background-color:white;">
                                             <h4 class="card-title">
-                                                <a href="#">{{ $workpackage->title }}</a>
+                                                <a href="#">{{ $newsletterItem->title }}</a>
                                             </h4>
                                             <p class="card-text">
-                                                {!! Str::words(strip_tags($workpackage->description), 100, '...') !!}
+                                                {!! Str::words(strip_tags($newsletterItem->article), 35, '...') !!}
                                             </p>
-                                            <!-- Button to trigger modal -->
-                                            <button type="button" class="btn btn-primary" style="background-color: #5cb874" data-bs-toggle="modal" data-bs-target="#newsletterModal{{ $workpackage->id }}">
+                                            <a href="{{ url('/individual_newsletter/' . $newsletterItem->id) }}" class="btn btn-primary" style="background-color: #5cb874; border-color: #5cb874;">
                                                 Read More
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Modal -->
-                                <div class="modal fade" id="newsletterModal{{ $workpackage->id }}" tabindex="-1" aria-labelledby="newsletterModalLabel{{ $workpackage->id }}" aria-hidden="true">
-                                    <div class="modal-dialog modal-lg modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="newsletterModalLabel{{ $workpackage->id }}">{{ $workpackage->title }}</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                            <div class="modal-body">
-                                                    {!! $workpackage->article !!}
-                                                </div>
-                                            </div>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>

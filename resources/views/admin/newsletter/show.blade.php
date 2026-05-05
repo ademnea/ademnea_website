@@ -70,7 +70,13 @@
                                     <tr>
                                         <th>ID</th><td>{{ $newsletter->id }}</td>
                                     </tr>
-                                    <tr><th> Title </th><td> {{ $newsletter->title }} </td></tr><tr><th> Description </th><td> {{ $newsletter->description }} </td></tr><tr><th> Image </th><td> {{ $newsletter->image }} </td></tr>
+                                    <tr><th> Title </th><td> {{ $newsletter->title }} </td></tr><tr><th> Description </th><td> {{ $newsletter->description }} </td></tr><tr><th> Image </th><td>
+                                        @if($newsletter->image)
+                                            <img src="{{ asset($newsletter->image) }}" alt="{{ $newsletter->title }}" style="max-width: 220px; height: auto;">
+                                        @else
+                                            No image
+                                        @endif
+                                    </td></tr>
                                 </tbody>
                             </table>
                         </div>

@@ -13,7 +13,7 @@ class DisplayNewsletterController extends Controller
     public function displayNewsletter()
     {
         $workpackages = WorkPackage::get();   
-        $newsletter= Newsletter::all();
+        $newsletter= Newsletter::orderByDesc('id')->get();
         return view('website.newsletter', ['newsletter'=> $newsletter,'workpackages'=>$workpackages,]);
 
     }
