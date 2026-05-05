@@ -71,15 +71,20 @@
         @enderror
 </div>
 
-{{-- <div class="form-group">
-    <label for="image" class="control-label">{{ 'Image' }}(jpg, peg & png only allowed)</label>
-    <input class="form-control @error('image') is-invalid @enderror" name="image" type="file" id="image">
+<div class="form-group {{ $errors->has('image') ? 'has-error' : ''}}">
+    <label for="image" class="control-label">{{ 'Image' }} (jpg, jpeg, png, webp, gif only)</label>
+    <input class="form-control @error('image') is-invalid @enderror" name="image" type="file" id="image" accept="image/*">
+    @if(isset($newsletter) && !empty($newsletter->image))
+        <div class="mt-2">
+            <img src="{{ asset($newsletter->image) }}" alt="Newsletter image" style="max-width: 180px; height: auto;">
+        </div>
+    @endif
     @error('image')
         <div class="invalid-feedback mt-2 text-sm">
             {{ $message }}
         </div>
-        @enderror
-</div> --}}
+    @enderror
+</div>
 
 
 <div class="form-group">
