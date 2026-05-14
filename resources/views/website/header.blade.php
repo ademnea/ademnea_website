@@ -82,7 +82,7 @@
                     </ul> --}}
                 </li>
 
-                <li><a href="/displaynewsletter"><span>Blog</span></a></li>
+                <li><a href="/displaynewsletter"><span>Newsletters</span></a></li>
 
                 <li><a  href="/displayevent">Gallery</a></li>
 
