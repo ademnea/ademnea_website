@@ -52,10 +52,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.6/flowbite.min.js"></script>
 
     @include('layouts.scripts')
-    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-   <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+
     @yield('page_scripts')
-    <script src="https://unpkg.com/flowbite@1.4.7/dist/flowbite.js"></script>   -->
 
     @yield('scripts')
 

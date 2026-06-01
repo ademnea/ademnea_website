@@ -39,9 +39,6 @@
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                 <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $loop->iteration }}</td>
                 <td class="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                    <div class="w-10 h-10 rounded-full bg-green-700 flex items-center justify-center text-white font-bold text-sm">
-                        {{ strtoupper(substr($user->name, 0, 1)) }}
-                    </div>
                     <div class="pl-3">
                         <div class="text-base font-semibold">{{ $user->name }}</div>
                     </div>
@@ -132,43 +129,28 @@
 @endsection
 
 @section('page_scripts')
-<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 <script>
 $(document).ready(function() {
     var table = $('#myTable').DataTable({
         responsive: true,
-        searching: true,
-        paging: true,
         pageLength: 10,
-        lengthMenu: [5, 10, 25, 50],
-        dom: 'rtip',
-        language: {
-            paginate: {
-                previous: 'Prev',
-                next: 'Next'
-            }
-        }
+        lengthMenu: [5, 10, 25, 50]
     });
 
-    // Custom search input
     $('#searchInput').on('keyup', function() {
         table.search($(this).val()).draw();
     });
 
-    // Role filter (searches the name/email column)
     $('#filterRole').on('change', function() {
-        table.column(2).search($(this).val()).draw();
+        table.search($(this).val()).draw();
     });
 
-    // Reset filters
     $('#resetFilters').on('click', function() {
         $('#searchInput').val('');
         $('#filterRole').val('');
-        table.search('').columns().search('').draw();
+        table.search('').draw();
     });
 
-    // Page length selector
     $('#pageLengthSelect').on('change', function() {
         table.page.len($(this).val()).draw();
     });
