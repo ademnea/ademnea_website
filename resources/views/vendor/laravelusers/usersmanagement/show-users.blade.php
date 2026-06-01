@@ -2,27 +2,6 @@
 @section('content')
 
 <div id="myTableContainer" class="relative p-3 mt-4 overflow-x-auto shadow-md sm:rounded-lg">
-    <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center space-x-2">
-            <input type="text" id="searchInput" placeholder="Search users..." class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white w-64">
-            <select id="filterRole" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                <option value="">All Roles</option>
-                <option value="admin">Admin</option>
-                <option value="user">User</option>
-            </select>
-            <button id="resetFilters" class="text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2.5">Reset</button>
-        </div>
-        <div class="flex items-center space-x-2">
-            <label class="text-sm text-gray-700 dark:text-gray-400">Show</label>
-            <select id="pageLengthSelect" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                <option value="5">5</option>
-                <option value="10" selected>10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-            </select>
-            <label class="text-sm text-gray-700 dark:text-gray-400">entries</label>
-        </div>
-    </div>
     <table id="myTable" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
@@ -131,28 +110,9 @@
 @section('page_scripts')
 <script>
 $(document).ready(function() {
-    var table = $('#myTable').DataTable({
+    $('#myTable').DataTable({
         responsive: true,
-        pageLength: 10,
-        lengthMenu: [5, 10, 25, 50]
-    });
-
-    $('#searchInput').on('keyup', function() {
-        table.search($(this).val()).draw();
-    });
-
-    $('#filterRole').on('change', function() {
-        table.search($(this).val()).draw();
-    });
-
-    $('#resetFilters').on('click', function() {
-        $('#searchInput').val('');
-        $('#filterRole').val('');
-        table.search('').draw();
-    });
-
-    $('#pageLengthSelect').on('change', function() {
-        table.page.len($(this).val()).draw();
+        pageLength: 10
     });
 });
 
