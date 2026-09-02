@@ -41,7 +41,7 @@
                 </li>
                 @endforeach
             </ul>
-            {{ $videos->appends(['hive_id' => $hive_id])->links() }}
+            {{ $videos->appends(['hive_id' => $hive_id])->links('vendor.pagination.simple-custom') }}
 
             
         </div>

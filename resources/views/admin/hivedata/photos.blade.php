@@ -27,7 +27,7 @@
                 </div>
                 @endforeach
             </div>
-            {{ $photos->appends(['hive_id' => $hive_id])->links() }}
+            {{ $photos->appends(['hive_id' => $hive_id])->links('vendor.pagination.simple-custom') }}
         </div>
     </div>
 </div>
