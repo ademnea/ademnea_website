@@ -74,7 +74,7 @@ https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js
 <script type="text/javascript">
 $(function() {
 
-  var start = moment().subtract(1, 'days'); //by default , just display data for the last 30 days
+  var start = moment().subtract(6, 'days'); //by default , just display data for the last 7 days
   var end = moment();
   var hiveId = {{ $hive_id }}; 
   var myChart = echarts.init(document.getElementById('chart'));
