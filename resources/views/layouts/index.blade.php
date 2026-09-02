@@ -56,7 +56,7 @@
                       <h3 class="rate-percentage">{{$users}}</h3>
                       <p class="text-success d-flex"><i class="mdi mdi-menu-down"></i><span>+0.8%</span></p>
                     </div>
-                    
+
                   </div>
                 </div>
               </div>
