@@ -1,6 +1,13 @@
 <!-- plugins:js -->
 <script src="{{asset('dash/vendors/js/vendor.bundle.base.js')}}"></script>
 <!-- endinject -->
+
+<!-- vendor.bundle.base.js bundles its own jQuery, replacing window.$ after the
+     head copy already loaded. Re-attach the date range picker plugin to
+     whichever jQuery instance is now active so it's still there when pages'
+     $(function(){...}) ready-handlers run. -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.min.js"></script>
 <!-- Plugin js for this page -->
 <script src="{{asset('dash/vendors/chart.js/Chart.min.js')}}"></script>
 <script src="{{asset('dash/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
@@ -20,13 +27,6 @@
 
 <!-- Achuka flowbite -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.6/flowbite.min.js"></script>
-
-
-
-<!-- Date range picker -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
 
 <!-- End custom js for this page-->
