@@ -99,11 +99,4 @@
         "extraPlugins" : 'imagebrowser',
 		"imageBrowser_listUrl" : "/images_list.json"
     })
-
-    CKEDITOR.replace('title', {
-        filebrowserUploadUrl: "{{route('upload', ['_token' => csrf_token() ])}}",
-        filebrowserUploadMethod: 'form',
-        "extraPlugins" : 'imagebrowser',
-		"imageBrowser_listUrl" : "/images_list.json"
-    })
 </script>
