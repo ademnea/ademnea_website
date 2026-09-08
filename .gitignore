@@ -65,3 +65,8 @@ storage/debugbar/.gitignore
 MODULES/generated_report/
 bootstrap/cache/
 storage/debugbar/
+
+# Runtime data written by the CKEditor image browser at request time -
+# must not be reset by deploys (git reset --hard would wipe upload history
+# and reintroduce the www-data permission problem on every deploy).
+/public/images_list.json
