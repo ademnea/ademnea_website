@@ -64,21 +64,11 @@
             @endforeach
         </tbody>
     </table>
+
+    <div class="mt-4">
+        {{ $audios->appends(['hive_id' => $hiveId])->links('vendor.pagination.simple-custom') }}
+    </div>
 </div>
 
 
-@endsection
-<!-- added pagination and search-->
-@section('page_scripts')
-<!-- Include DataTables JS file -->
-<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
-
-<script>
-  $(document).ready(function() {
-   $('#myTable').DataTable({
-      responsive: true
-   });
-});
-</script>
 @endsection
