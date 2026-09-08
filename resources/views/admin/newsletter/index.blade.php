@@ -34,6 +34,12 @@
         background-color: #f3f4f6;
         border-color: #e5e7eb;
     }
+
+    .newsletter-article-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
 </style>
 
 
@@ -73,7 +79,7 @@
                 <td class="px-6 py-4" style="width: 40%;">
                     <details>
                         <summary>View article</summary>
-                        <p>{!! $item->article !!}</p>
+                        <div class="newsletter-article-content">{!! $item->article !!}</div>
                     </details>
                 </td>
                <td class="px-6 py-4 whitespace-nowrap">
@@ -138,7 +144,7 @@
                              "imageBrowser_listUrl" : "/images_list.json"
                          })
 
-                         CKEDITOR.replace('description', {
+                     CKEDITOR.replace('description', {
                              filebrowserUploadUrl: "{{route('upload', ['_token' => csrf_token() ])}}",
                              filebrowserUploadMethod: 'form',
                              "extraPlugins" : 'imagebrowser',
@@ -211,7 +217,7 @@
                                 "imageBrowser_listUrl" : "/images_list.json"
                             })
 
-                            CKEDITOR.replace('description', {
+                        CKEDITOR.replace('description', {
                                 filebrowserUploadUrl: "{{route('upload', ['_token' => csrf_token() ])}}",
                                 filebrowserUploadMethod: 'form',
                                 "extraPlugins" : 'imagebrowser',
@@ -260,7 +266,7 @@
                                 </div>
                             @endif
 
-                            <div class="prose max-w-none dark:prose-invert">
+                            <div class="prose max-w-none dark:prose-invert newsletter-article-content">
                                 {!! $item->article !!}
                             </div>
                         </div>

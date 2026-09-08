@@ -177,15 +177,17 @@ class NewsletterController extends Controller
             $msg = 'Image uploaded successfully'; 
             $response = "<script>window.parent.CKEDITOR.tools.callFunction($CKEditorFuncNum, '$url', '$msg')</script>";
             //append to the json file
-                    $file = file_get_contents('images_list.json', true);
-             $data = json_decode($file,true);
-             unset($file);
+            $jsonPath = public_path('images_list.json');
+            $data = File::exists($jsonPath) ? json_decode(File::get($jsonPath), true) : [];
+            if (!is_array($data)) {
+                $data = [];
+            }
 
              $path="/images/".$fileName;
              //you need to add new data as next index of data.
              $data[] = array('image' => $path);
              $result=json_encode($data);
-             file_put_contents('images_list.json', $result);
+             File::put($jsonPath, $result);
              unset($result);
 
             @header('Content-type: text/html; charset=utf-8'); 
