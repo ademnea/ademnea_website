@@ -35,11 +35,13 @@
                             {{ $video->created_at }}
                         </a>
                         @if($video->latestAnalysedCount)
-                            <p class="text-sm text-gray-600">
-                                Avg {{ number_format($video->latestAnalysedCount->mean_count, 1) }} bees ·
-                                Peak {{ $video->latestAnalysedCount->max_count }} ·
-                                {{ round($video->latestAnalysedCount->activity_fraction * 100) }}% active
-                            </p>
+                            @php $bc = $video->latestAnalysedCount; @endphp
+                            <table class="text-xs text-gray-600 mt-1">
+                                <tr><td class="pr-2">Bee Count</td><td>{{ $bc->bee_count }}</td></tr>
+                                <tr><td class="pr-2">Mean Count</td><td>{{ number_format($bc->mean_count, 2) }}</td></tr>
+                                <tr><td class="pr-2">Max Count</td><td>{{ $bc->max_count }}</td></tr>
+                                <tr><td class="pr-2">Activity</td><td>{{ round($bc->activity_fraction * 100) }}%</td></tr>
+                            </table>
                         @elseif($video->latestBeeCount)
                             <p class="text-sm text-gray-600">
                                 Bee Count: {{ $video->latestBeeCount->bee_count }}
