@@ -47,5 +47,17 @@ class HiveVideo extends Model
             return $this->hasOne(BeeCount::class, 'hive_video_id')->latestOfMany();
         }
 
+        /**
+         * Like latestBeeCount(), but only ever resolves to a row the
+         * dispatcher has finished analysing - safe to read mean_count,
+         * max_count, activity_fraction etc. from. Legacy pre-pipeline rows
+         * (processing_status = pending) never match this, by design - see
+         * DASHBOARD-INTEGRATION.md §4.1-4.2.
+         */
+        public function latestAnalysedCount()
+        {
+            return $this->hasOne(BeeCount::class, 'hive_video_id')->analysed()->latestOfMany();
+        }
+
 
 }

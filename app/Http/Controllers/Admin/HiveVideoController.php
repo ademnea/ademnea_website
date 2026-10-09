@@ -19,7 +19,7 @@ class HiveVideoController extends Controller
             {
                 $hiveId = $request->query('hive_id');
 
-                $videos = HiveVideo::with('latestBeeCount')
+                $videos = HiveVideo::with(['latestBeeCount', 'latestAnalysedCount'])
                     ->where('hive_id', $hiveId)
                     ->latest()
                     ->paginate(8);

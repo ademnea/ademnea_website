@@ -21,11 +21,44 @@ class DashboardController extends Controller
         $totalHives = Hive::count();
 
         [$hiveHealth, $dataTypeKeys, $staleThresholdHours, $staleHiveCount, $noDataHiveCount, $normalHiveCount] = $this->buildHiveHealth();
+        [$beeActivity, $beeActivityDays] = $this->buildBeeActivity();
 
         return view('admin.dashboard.index', compact(
             'totalHives',
-            'hiveHealth', 'dataTypeKeys', 'staleThresholdHours', 'staleHiveCount', 'noDataHiveCount', 'normalHiveCount'
+            'hiveHealth', 'dataTypeKeys', 'staleThresholdHours', 'staleHiveCount', 'noDataHiveCount', 'normalHiveCount',
+            'beeActivity', 'beeActivityDays'
         ));
+    }
+
+    /**
+     * Per-hive bee activity rolled up over the last N days, from videos the
+     * detection pipeline has actually finished analysing. See
+     * DASHBOARD-INTEGRATION.md §7 "Daily activity per hive" for the
+     * underlying query this is based on - grouped per hive here rather than
+     * per hive+day, for a dashboard-sized summary.
+     */
+    private function buildBeeActivity()
+    {
+        $days = 7;
+
+        $rows = DB::table('hive_videos as hv')
+            ->join('bee_counts as bc', function ($join) {
+                $join->on('bc.hive_video_id', '=', 'hv.id')
+                    ->where('bc.processing_status', '=', 'done');
+            })
+            ->where('bc.processed_at', '>=', now()->subDays($days))
+            ->select(
+                'hv.hive_id',
+                DB::raw('COUNT(*) as clips_analysed'),
+                DB::raw('ROUND(AVG(bc.mean_count), 2) as avg_bees'),
+                DB::raw('MAX(bc.max_count) as peak_bees'),
+                DB::raw('ROUND(AVG(bc.activity_fraction) * 100) as avg_activity_pct')
+            )
+            ->groupBy('hv.hive_id')
+            ->get()
+            ->keyBy('hive_id');
+
+        return [$rows, $days];
     }
 
     /**

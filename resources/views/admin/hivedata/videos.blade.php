@@ -34,9 +34,22 @@
                         <a href="#" class="block hover:bg-gray-200 px-2 py-1 rounded playlist-item" data-video="{{ $video->path }}">
                             {{ $video->created_at }}
                         </a>
-                        <p class="text-sm text-gray-600">
-                            Bee Count: {{ optional($video->latestBeeCount)->bee_count ?? 0 }}
-                        </p>
+                        @if($video->latestAnalysedCount)
+                            <p class="text-sm text-gray-600">
+                                Avg {{ number_format($video->latestAnalysedCount->mean_count, 1) }} bees ·
+                                Peak {{ $video->latestAnalysedCount->max_count }} ·
+                                {{ round($video->latestAnalysedCount->activity_fraction * 100) }}% active
+                            </p>
+                        @elseif($video->latestBeeCount)
+                            <p class="text-sm text-gray-600">
+                                Bee Count: {{ $video->latestBeeCount->bee_count }}
+                                @if($video->latestBeeCount->processing_status !== 'done')
+                                    <span class="text-xs text-gray-400">({{ $video->latestBeeCount->processing_status }})</span>
+                                @endif
+                            </p>
+                        @else
+                            <p class="text-sm text-gray-400">Not yet analysed</p>
+                        @endif
                     </div>
                 </li>
                 @endforeach
