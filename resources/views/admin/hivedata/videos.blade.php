@@ -36,12 +36,16 @@
                         </a>
                         @if($video->latestAnalysedCount)
                             @php $bc = $video->latestAnalysedCount; @endphp
-                            <table class="text-xs text-gray-600 mt-1">
-                                <tr><td class="pr-2">Bee Count</td><td>{{ $bc->bee_count }}</td></tr>
-                                <tr><td class="pr-2">Mean Count</td><td>{{ number_format($bc->mean_count, 2) }}</td></tr>
-                                <tr><td class="pr-2">Max Count</td><td>{{ $bc->max_count }}</td></tr>
-                                <tr><td class="pr-2">Activity</td><td>{{ round($bc->activity_fraction * 100) }}%</td></tr>
-                            </table>
+                            <div class="flex text-xs text-gray-600 mt-1 gap-4">
+                                <div>
+                                    <div><span class="text-gray-400">Bee Count</span> {{ $bc->bee_count }}</div>
+                                    <div><span class="text-gray-400">Mean Count</span> {{ number_format($bc->mean_count, 2) }}</div>
+                                </div>
+                                <div>
+                                    <div><span class="text-gray-400">Max Count</span> {{ $bc->max_count }}</div>
+                                    <div><span class="text-gray-400">Activity</span> {{ round($bc->activity_fraction * 100) }}%</div>
+                                </div>
+                            </div>
                         @elseif($video->latestBeeCount)
                             <p class="text-sm text-gray-600">
                                 Bee Count: {{ $video->latestBeeCount->bee_count }}
