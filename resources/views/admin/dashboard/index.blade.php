@@ -162,6 +162,55 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-12 grid-margin stretch-card">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-sm-flex justify-content-between align-items-center mb-3">
+                                    <div>
+                                        <h4 class="mb-0">Bee Activity</h4>
+                                        <p class="text-muted mb-0">Rolled up from videos the detection pipeline has finished analysing, last {{ $beeActivityDays }} days.</p>
+                                    </div>
+                                </div>
+
+                                @if($beeActivity->isEmpty())
+                                    <p class="text-muted mb-0">No videos have been analysed by the detection pipeline yet in this window.</p>
+                                @else
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Hive</th>
+                                                    <th>Clips Analysed</th>
+                                                    <th>Avg Bees</th>
+                                                    <th>Peak Bees</th>
+                                                    <th>Avg Activity</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($hiveHealth as $row)
+                                                    @php $bee = $beeActivity[$row['hive_id']] ?? null; @endphp
+                                                    <tr>
+                                                        <td>Hive {{ $row['hive_id'] }}</td>
+                                                        @if($bee)
+                                                            <td>{{ $bee->clips_analysed }}</td>
+                                                            <td>{{ $bee->avg_bees }}</td>
+                                                            <td>{{ $bee->peak_bees }}</td>
+                                                            <td>{{ $bee->avg_activity_pct }}%</td>
+                                                        @else
+                                                            <td colspan="4" class="text-muted">No analysed clips in this window</td>
+                                                        @endif
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

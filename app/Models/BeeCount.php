@@ -9,9 +9,26 @@ class BeeCount extends Model
 {
     use HasFactory;
 
-        public function hiveVideo()
+    protected $casts = [
+        'mean_count'        => 'float',
+        'max_count'         => 'integer',
+        'activity_fraction' => 'float',
+        'frames_analyzed'   => 'integer',
+        'attempts'          => 'integer',
+        'processed_at'      => 'datetime',
+    ];
+
+    public function hiveVideo()
     {
         return $this->belongsTo(HiveVideo::class);
     }
 
+    /**
+     * Only rows the dispatcher has finished analysing. Every metric column
+     * is null until then - see DASHBOARD-INTEGRATION.md §4.1.
+     */
+    public function scopeAnalysed($query)
+    {
+        return $query->where('processing_status', 'done');
+    }
 }
