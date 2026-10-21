@@ -25,6 +25,12 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+
+        // The command itself decides whether today's report is due, based on
+        // the send time the admin picked on the report settings page.
+        $schedule->command('hives:send-attention-report --scheduled')
+            ->everyFiveMinutes()
+            ->withoutOverlapping();
     }
 
     /**

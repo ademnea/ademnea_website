@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Hive;
+use App\Services\HiveHealthService;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -15,12 +14,19 @@ class DashboardController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(HiveHealthService $hiveHealthService)
     {
         //
-        $totalHives = Hive::count();
+        $health = $hiveHealthService->build();
 
-        [$hiveHealth, $dataTypeKeys, $staleThresholdHours, $staleHiveCount, $noDataHiveCount, $normalHiveCount] = $this->buildHiveHealth();
+        $totalHives = $health['counts']['all'];
+        $hiveHealth = $health['rows'];
+        $dataTypeKeys = array_keys(HiveHealthService::DATA_TYPES);
+        $staleThresholdHours = HiveHealthService::STALE_THRESHOLD_HOURS;
+        $staleHiveCount = $health['counts']['attention'];
+        $noDataHiveCount = $health['counts']['nodata'];
+        $normalHiveCount = $health['counts']['normal'];
+
         [$beeActivity, $beeActivityDays] = $this->buildBeeActivity();
 
         return view('admin.dashboard.index', compact(
@@ -28,6 +34,29 @@ class DashboardController extends Controller
             'hiveHealth', 'dataTypeKeys', 'staleThresholdHours', 'staleHiveCount', 'noDataHiveCount', 'normalHiveCount',
             'beeActivity', 'beeActivityDays'
         ));
+    }
+
+    /**
+     * The hives behind one of the dashboard cards, with the farm and farmer
+     * each one belongs to. ?status= all | normal | attention | nodata
+     */
+    public function hives(Request $request, HiveHealthService $hiveHealthService)
+    {
+        $status = $request->query('status', 'all');
+        if (!array_key_exists($status, HiveHealthService::STATUS_LABELS)) {
+            $status = 'all';
+        }
+
+        $health = $hiveHealthService->build();
+        $counts = $health['counts'];
+        $hives = array_values(array_filter($health['rows'], function ($row) use ($status) {
+            return $status === 'all' || $row['status'] === $status;
+        }));
+
+        $statusLabels = HiveHealthService::STATUS_LABELS;
+        $staleThresholdHours = HiveHealthService::STALE_THRESHOLD_HOURS;
+
+        return view('admin.dashboard.hives', compact('hives', 'status', 'statusLabels', 'counts', 'staleThresholdHours'));
     }
 
     /**
@@ -59,89 +88,6 @@ class DashboardController extends Controller
             ->keyBy('hive_id');
 
         return [$rows, $days];
-    }
-
-    /**
-     * For every hive, work out how long ago each data type last reported
-     * and flag anything older than the staleness threshold.
-     */
-    private function buildHiveHealth()
-    {
-        $dataTypes = [
-            'temperature' => 'hive_temperatures',
-            'humidity' => 'hive_humidity',
-            'carbondioxide' => 'hive_carbondioxide',
-            'weight' => 'hive_weights',
-            'voc' => 'hive_vocs',
-            'photos' => 'hive_photos',
-            'videos' => 'hive_videos',
-            'audios' => 'hive_audios',
-        ];
-
-        $staleThresholdHours = 48;
-
-        $latestByType = [];
-        foreach ($dataTypes as $key => $table) {
-            $latestByType[$key] = DB::table($table)
-                ->select('hive_id', DB::raw('MAX(created_at) as latest'))
-                ->groupBy('hive_id')
-                ->pluck('latest', 'hive_id');
-        }
-
-        $hives = DB::table('hives')
-            ->leftJoin('farms', 'hives.farm_id', '=', 'farms.id')
-            ->select('hives.id as hive_id', 'farms.name as farm_name')
-            ->orderBy('hives.id')
-            ->get();
-
-        $now = now();
-        $hiveHealth = [];
-        $staleHiveCount = 0;
-        $noDataHiveCount = 0;
-        $normalHiveCount = 0;
-
-        foreach ($hives as $hive) {
-            $row = [
-                'hive_id' => $hive->hive_id,
-                'farm_name' => $hive->farm_name ?? '—',
-                'types' => [],
-            ];
-
-            $hasStale = false;
-            $hasAnyData = false;
-
-            foreach ($dataTypes as $key => $table) {
-                $latest = $latestByType[$key][$hive->hive_id] ?? null;
-
-                if (!$latest) {
-                    $status = 'none';
-                    $ago = null;
-                } else {
-                    $hasAnyData = true;
-                    $latestAt = Carbon::parse($latest);
-                    $status = $latestAt->diffInHours($now) > $staleThresholdHours ? 'stale' : 'fresh';
-                    $ago = $latestAt->diffForHumans();
-
-                    if ($status === 'stale') {
-                        $hasStale = true;
-                    }
-                }
-
-                $row['types'][$key] = ['status' => $status, 'ago' => $ago];
-            }
-
-            if (!$hasAnyData) {
-                $noDataHiveCount++;
-            } elseif ($hasStale) {
-                $staleHiveCount++;
-            } else {
-                $normalHiveCount++;
-            }
-
-            $hiveHealth[] = $row;
-        }
-
-        return [$hiveHealth, array_keys($dataTypes), $staleThresholdHours, $staleHiveCount, $noDataHiveCount, $normalHiveCount];
     }
 
     /**

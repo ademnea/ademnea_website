@@ -15,16 +15,16 @@
                                 <div class="row">
                                     <div class="col-9">
                                         <div class="d-flex align-items-center align-self-start">
-                                            <h3 class="mb-0 text-info">{{$totalHives}}</h3>
+                                            <h3 class="mb-0 text-info" style="font-size: 36px; font-weight: bold; text-align: center;">{{$totalHives}}</h3>
                                         </div>
                                     </div>
                                     <div class="col-3 text-end">
                                         <i class="mdi mdi-cube-outline mdi-36px text-info"></i>
                                     </div>
                                 </div>
-                                <h5 class="text-muted font-weight-normal">Total Hives</h5>
-                                <p>This represents all beehives managed across farms,
-                                   each tracked individually for productivity and health.</p>
+                                <h5 class="text-muted font-weight-normal">
+                                    <a href="{{ url('/admin/dashboard/hives?status=all') }}" class="stretched-link text-muted" title="View these hives and their farmers" style="font-size: 25px; text-align: center;">Total Hives</a>
+                                </h5>
                             </div>
                         </div>
                     </div>
@@ -36,16 +36,16 @@
                                 <div class="row">
                                     <div class="col-9">
                                         <div class="d-flex align-items-center align-self-start">
-                                            <h3 class="mb-0 text-success">{{$normalHiveCount}}</h3>
+                                            <h3 class="mb-0 text-success" style="font-size: 36px; font-weight: bold; text-align: center;">{{$normalHiveCount}}</h3>
                                         </div>
                                     </div>
                                     <div class="col-3 text-end">
                                         <i class="mdi mdi-check-circle-outline mdi-36px text-success"></i>
                                     </div>
                                 </div>
-                                <h5 class="text-muted font-weight-normal">Reporting Normally</h5>
-                                <p>Hives with at least one data type reporting, and nothing
-                                   older than {{ $staleThresholdHours }}h.</p>
+                                <h5 class="text-muted font-weight-normal">
+                                    <a href="{{ url('/admin/dashboard/hives?status=normal') }}" class="stretched-link text-muted" title="View these hives and their farmers" style="font-size: 25px; text-align: center;">Reporting Normally</a>
+                                </h5>
                             </div>
                         </div>
                     </div>
@@ -57,16 +57,16 @@
                                 <div class="row">
                                     <div class="col-9">
                                         <div class="d-flex align-items-center align-self-start">
-                                            <h3 class="mb-0 text-danger">{{$staleHiveCount}}</h3>
+                                            <h3 class="mb-0 text-danger" style="font-size: 36px; font-weight: bold; text-align: center;">{{$staleHiveCount}}</h3>
                                         </div>
                                     </div>
                                     <div class="col-3 text-end">
                                         <i class="mdi mdi-alert-circle-outline mdi-36px text-danger"></i>
                                     </div>
                                 </div>
-                                <h5 class="text-muted font-weight-normal">Needing Attention</h5>
-                                <p>Hives with at least one data type that hasn't reported
-                                   in over {{ $staleThresholdHours }}h.</p>
+                                <h5 class="text-muted font-weight-normal">
+                                    <a href="{{ url('/admin/dashboard/hives?status=attention') }}" class="stretched-link text-muted" title="View these hives and their farmers" style="font-size: 25px; text-align: center;">Needing Attention</a>
+                                </h5>
                             </div>
                         </div>
                     </div>
@@ -78,16 +78,16 @@
                                 <div class="row">
                                     <div class="col-9">
                                         <div class="d-flex align-items-center align-self-start">
-                                            <h3 class="mb-0 text-warning">{{$noDataHiveCount}}</h3>
+                                            <h3 class="mb-0 text-warning" style="font-size: 36px; font-weight: bold; text-align: center;">{{$noDataHiveCount}}</h3>
                                         </div>
                                     </div>
                                     <div class="col-3 text-end">
                                         <i class="mdi mdi-help-circle-outline mdi-36px text-warning"></i>
                                     </div>
                                 </div>
-                                <h5 class="text-muted font-weight-normal">No Data At All</h5>
-                                <p>Hives that have never sent a single reading of any kind -
-                                   likely never deployed or not yet connected.</p>
+                                <h5 class="text-muted font-weight-normal">
+                                    <a href="{{ url('/admin/dashboard/hives?status=nodata') }}" class="stretched-link text-muted" title="View these hives and their farmers" style="font-size: 25px; text-align: center;">No Data At All</a>
+                                </h5>
                             </div>
                         </div>
                     </div>
@@ -104,7 +104,7 @@
                                         <p class="text-muted mb-0">Time since last reading received per hive. Anything older than {{ $staleThresholdHours }}h is flagged.</p>
                                     </div>
                                     @if($staleHiveCount > 0)
-                                        <span class="badge badge-opacity-danger">{{ $staleHiveCount }} hive{{ $staleHiveCount > 1 ? 's' : '' }} need attention</span>
+                                        <a href="{{ url('/admin/dashboard/hives?status=attention') }}" class="badge badge-opacity-danger">{{ $staleHiveCount }} hive{{ $staleHiveCount > 1 ? 's' : '' }} need attention</a>
                                     @else
                                         <span class="badge badge-opacity-success">All hives reporting normally</span>
                                     @endif

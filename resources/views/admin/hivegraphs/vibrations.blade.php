@@ -52,6 +52,12 @@
     </script>
   </body>
 
+    @if(is_null($data))
+    <div class='bg-white mb-4 p-6 text-center'>
+      <h3 class='font-bold text-green-600'>No vibration data yet</h3>
+      <p class='text-gray-600'>No vibration readings have been recorded for this hive.</p>
+    </div>
+    @else
     <!-- Amplitude vs Frequency Chart -->
     <div class='bg-white mb-4'>
       <h3 class='mx-2 font-bold py-1 text-green-600'>Amplitude vs Frequency</h3>
@@ -163,6 +169,7 @@
             // }, 60000); // 60 seconds interval
         });
     </script>
+    @endif
   </div>
 
 @endsection

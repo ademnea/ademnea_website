@@ -71,7 +71,16 @@ Route::middleware('auth:web')->group(function () {
 
 
     //added for dashboard_page
+    // must stay above the dashboard resource, or "hives" is read as a dashboard id
+    Route::get('admin/dashboard/hives', 'App\Http\Controllers\Admin\DashboardController@hives');
     Route::resource('admin/dashboard', 'App\Http\Controllers\Admin\DashboardController');
+
+    // smtp + recipients for the hives needing attention email report
+    Route::get('admin/report-settings', 'App\Http\Controllers\Admin\ReportSettingController@edit');
+    Route::post('admin/report-settings', 'App\Http\Controllers\Admin\ReportSettingController@update');
+    Route::post('admin/report-settings/test-connection', 'App\Http\Controllers\Admin\ReportSettingController@testConnection');
+    Route::post('admin/report-settings/test','App\Http\Controllers\Admin\ReportSettingController@sendTest');
+    Route::post('admin/report-settings/send', 'App\Http\Controllers\Admin\ReportSettingController@sendNow');
     Route::resource('admin/hive', 'App\Http\Controllers\Admin\HiveController');
     Route::resource('admin/hivedata', 'App\Http\Controllers\Admin\HiveDataController');
     Route::resource('admin/videodata', 'App\Http\Controllers\Admin\HiveVideoController');

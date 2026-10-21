@@ -22,7 +22,8 @@ class HiveVibrationsController extends Controller
             $directory = public_path('hivevibration');
 
             // the latest CSV file that matches the hive ID
-            $csvFiles = File::files($directory);
+            // The folder is filled by MODULES/register_hivevibration.py and may not exist yet (e.g. locally)
+            $csvFiles = File::isDirectory($directory) ? File::files($directory) : [];
             $csvFilePath = null;
             foreach ($csvFiles as $file) {
                 if (strpos($file->getFilename(), (string)$hiveId) !== false && $file->getExtension() == 'csv') {
@@ -31,16 +32,11 @@ class HiveVibrationsController extends Controller
                 }
             }
 
-            // Check if the CSV file exists
-            if (!$csvFilePath || !file_exists($csvFilePath)) {
-                return response()->json(['error' => 'CSV file not found for this hive ID']);
-            }
-
-            // Read the file content
-            $csvContent = file_get_contents($csvFilePath);
+            // No CSV yet for this hive: the page shows an empty state instead of the charts
+            $csvContent = ($csvFilePath && file_exists($csvFilePath)) ? file_get_contents($csvFilePath) : null;
 
             return view('admin.hivegraphs.vibrations', [
-                'data' => json_encode($csvContent),
+                'data' => $csvContent === null ? null : json_encode($csvContent),
                 'hive_id' => $hiveId,
                 'hive' => $hive
             ]);
