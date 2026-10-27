@@ -3,7 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
-use App\Http\Controllers\Admin\HiveDataController; 
+use App\Http\Controllers\Admin\HiveDataController;
+use App\Http\Controllers\Admin\HiveAnalysisController;
 
 use App\Exports\HiveTemperatureExport;
 use GuzzleHttp\Psr7\Request;
@@ -31,8 +32,8 @@ use App\Http\Controllers\FeedbackController;
 |
 */
 
-Route::get('/',[App\Http\Controllers\WebsiteController::class, 'index'])->name('website'); //route for home page, before login
-Route::get('register', [AuthController::class, 'registerForm'])->name('registerForm');//
+Route::get('/', [App\Http\Controllers\WebsiteController::class, 'index'])->name('website'); //route for home page, before login
+Route::get('register', [AuthController::class, 'registerForm'])->name('registerForm'); //
 Route::post('register', [AuthController::class, 'register'])->name('auth.register');
 Route::get('/login', [AuthController::class, 'loginForm'])->name('loginForm');
 Route::post('login', [AuthController::class, 'login'])->name('auth.login');
@@ -41,7 +42,7 @@ Route::post('password/reset', [AuthController::class, 'passwordReset']);
 //Route::view('/galleries', 'gallery');
 
 //the following routes handle the event-galleries.
-Route::post('/post_events','App\Http\Controllers\Admin\GalleryController@insert');
+Route::post('/post_events', 'App\Http\Controllers\Admin\GalleryController@insert');
 
 // Route::get('/albums_gallery','App\Http\Controllers\GalleryController@albums');
 // Route::get('/teams_gallery','App\Http\Controllers\GalleryController@teams');
@@ -49,8 +50,8 @@ Route::post('/post_events','App\Http\Controllers\Admin\GalleryController@insert'
 // Route::get('/photos_gallery','App\Http\Controllers\GalleryController@photos');
 
 //gallery view page
- //Route::view('/galleryview','galleryview');
- Route::get('/gallery_view','App\Http\Controllers\DisplayEventController@view_gallery');
+//Route::view('/galleryview','galleryview');
+Route::get('/gallery_view', 'App\Http\Controllers\DisplayEventController@view_gallery');
 
 Route::middleware('auth:web')->group(function () {
     Route::get('dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
@@ -67,7 +68,7 @@ Route::middleware('auth:web')->group(function () {
     Route::resource('admin/farmer', 'App\Http\Controllers\Admin\FarmerController');
 
     // Admin route for scholarship
-     Route::resource('admin/scholarship', 'App\Http\Controllers\Admin\ScholarshipsController');
+    Route::resource('admin/scholarship', 'App\Http\Controllers\Admin\ScholarshipsController');
 
 
     //added for dashboard_page
@@ -75,28 +76,28 @@ Route::middleware('auth:web')->group(function () {
     Route::resource('admin/hive', 'App\Http\Controllers\Admin\HiveController');
     Route::resource('admin/hivedata', 'App\Http\Controllers\Admin\HiveDataController');
     Route::resource('admin/videodata', 'App\Http\Controllers\Admin\HiveVideoController');
-    
+
     Route::resource('admin/photodata', 'App\Http\Controllers\Admin\HivePhotoController');
     Route::resource('admin/audiodata', 'App\Http\Controllers\Admin\HiveAudioController');
     Route::resource('admin/temperaturedata', 'App\Http\Controllers\Admin\HiveTemperatureController');
     Route::resource('admin/humiditydata', 'App\Http\Controllers\Admin\HiveHumidityController');
     Route::resource('admin/weightdata', 'App\Http\Controllers\Admin\HiveWeightController');
     Route::resource('admin/carbondioxidedata', 'App\Http\Controllers\Admin\HiveCarbondioxideController');
-    // add for VOC here 
+    // add for VOC here
     Route::resource('admin/vocdata', 'App\Http\Controllers\Admin\VOCController');
 
     Route::get('/vocdata/export', [VOCController::class, 'export'])->name('voc.export');
 
 
-//gallery route for the admin side
+    //gallery route for the admin side
     Route::get('/admin/gallery', 'App\Http\Controllers\Admin\GalleryController@index');
-    Route::post('/admin/event','App\Http\Controllers\Admin\GalleryController@update');
+    Route::post('/admin/event', 'App\Http\Controllers\Admin\GalleryController@update');
 
- //hive controllers
-    Route::post('/edithive','App\Http\Controllers\Admin\HiveController@update');
+    //hive controllers
+    Route::post('/edithive', 'App\Http\Controllers\Admin\HiveController@update');
 });
 
-                /* ------------HIVE DATA------------------*/
+/* ------------HIVE DATA------------------*/
 
 /* ------------TEMPERATURE------------------*/
 Route::get('/hive_data/{id}', [App\Http\Controllers\Admin\HiveDataController::class, 'temperatureDefault']);
@@ -122,10 +123,19 @@ Route::get('/hive_data/tempHumidity_data/{hive}', [App\Http\Controllers\Admin\Hi
 
 
 /*--------------------------------VIBRATIONS---------------*/
-Route::get('/hive_data/hiveVibration_data_default/{hive_id}',[App\Http\Controllers\HiveVibrationsController::class,'plot']);
+Route::get('/hive_data/hiveVibration_data_default/{hive_id}', [App\Http\Controllers\HiveVibrationsController::class, 'plot']);
 
 // Route::get('/hive/vibration/{id}', [App\Http\Controllers\HiveVibrationsController::class, 'vibrationDefault'])->name('hive.vibration');
 // Route::get('/hive/vibration-data/{hive}', [App\Http\Controllers\HiveVibrationsController::class, 'getVibrationData'])->name('hive.vibration.data');
+
+/* ---------------------------------- BEE COUNT ANALYSIS ---------------------------------- */
+// Pages read from hive_daily_features / hive_insights only. Nothing is
+// computed on request - `php artisan bee:analyse` writes those tables.
+Route::get('/analysis', [HiveAnalysisController::class, 'index'])->name('analysis.index');
+Route::get('/analysis/farm/{farm}', [HiveAnalysisController::class, 'farm'])->name('analysis.farm');
+Route::get('/analysis/farm/{farm}/data', [HiveAnalysisController::class, 'farmData'])->name('analysis.farm.data');
+Route::get('/analysis/hive/{hive}', [HiveAnalysisController::class, 'hive'])->name('analysis.hive');
+Route::get('/analysis/hive/{hive}/data', [HiveAnalysisController::class, 'hiveData'])->name('analysis.hive.data');
 
 
 
@@ -214,12 +224,12 @@ Route::get('weights/export', [App\Http\Controllers\Admin\HiveWeightController::c
 // Route::get('/sensor-data', [App\Http\Controllers\ThingSpeakController::class, 'index']);
 // Route::get('/fetch-sensor-data', [App\Http\Controllers\ThingSpeakController::class, 'fetchData']);
 Route::get('/admin/thingspeak-monitoring/{hive_id}', [App\Http\Controllers\ThingSpeakController::class, 'showMonitoring'])
-     ->name('thingspeak.monitoring');
+    ->name('thingspeak.monitoring');
 
 /*----------------------------------------analytics--------------------------------------------------*/
-Route::get('analytics/weight_analytics',[App\Http\Controllers\WeightAnalyticsController::class,'index']);
-Route::get('analytics/data_reports',[App\Http\Controllers\Admin\DataReportController::class,'index']);
-Route::get('analytics/temperature_humidity',[App\Http\Controllers\TemperatureAnalyticsController::class,'index']);
+Route::get('analytics/weight_analytics', [App\Http\Controllers\WeightAnalyticsController::class, 'index']);
+Route::get('analytics/data_reports', [App\Http\Controllers\Admin\DataReportController::class, 'index']);
+Route::get('analytics/temperature_humidity', [App\Http\Controllers\TemperatureAnalyticsController::class, 'index']);
 
 Route::get('website/gallery', [GalleryController::class, 'index']);
 
@@ -238,7 +248,7 @@ Route::post('/generate-local-report', [DataReportController::class, 'generateRep
 Route::post('/generate-local-report', [DataReportController::class, 'generateReport']);
 
 
-// gallery routes 
+// gallery routes
 // Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
 // Route::get('/gallery/{gallery}', [GalleryController::class, 'show'])->name('gallery.show');
 Route::get('/displaygallery', [GalleryController::class, 'index'])->name('gallery.display');
@@ -249,7 +259,7 @@ Route::get('/displaygallery', [GalleryController::class, 'index'])->name('galler
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
 Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show');
 
-// Gallery interns 
+// Gallery interns
 Route::resource('admin/gallery_interns', \App\Http\Controllers\Admin\GalleryInternController::class);
 
 #team page route
