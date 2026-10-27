@@ -1,5 +1,5 @@
- #THIS FILE CONTAINS COMMON FUNCTIONS REQUIRED 
- #IN REGISTER_HIVEMEDIA FILES(media = audios, images, videos)
+# THIS FILE CONTAINS COMMON FUNCTIONS REQUIRED
+# IN REGISTER_HIVEMEDIA FILES(media = audios, images, videos)
 import os
 import time
 import mysql.connector
@@ -12,27 +12,29 @@ import register_hivetemp_hivehumidity
 import register_hivevibration
 
 
-#CONNECTION TO DB, CORRECT DATABASE DETAILS HAVE TO BE PASSED AT THIS POINT
+# CONNECTION TO DB, CORRECT DATABASE DETAILS HAVE TO BE PASSED AT THIS POINT
 def database_connection():
-    mydb = mysql.connector.connect(host='localhost', user='root', password='W1m3@-d6p@55', db='ademnea')
+    mydb = mysql.connector.connect(
+        host="localhost", user="beekeeper", password="beekeeper", db="ademnea"
+    )
     return mydb
 
-#FUNCTION RECONSTRUCTS THE FILE NAME
-#i.e 2_1986-09-25_174530.006.jpg to 2_1986-09-25 17:45:30.006.jpg
-#THIS ALLOWS US EXTRACT TIMESTAMPS MORE EASILY
+
+# FUNCTION RECONSTRUCTS THE FILE NAME
+# i.e 2_1986-09-25_174530.006.jpg to 2_1986-09-25 17:45:30.006.jpg
+# THIS ALLOWS US EXTRACT TIMESTAMPS MORE EASILY
 def reconstruct(str):
     old_str = str.split("_")[2]
     new_str = ""
 
     for i in range(0, len(old_str)):
-        if(i == 2 or i == 4):
-           new_str =  new_str + ":"
-           new_str = new_str + old_str[i]
+        if i == 2 or i == 4:
+            new_str = new_str + ":"
+            new_str = new_str + old_str[i]
         else:
-           new_str =  new_str + old_str[i]
+            new_str = new_str + old_str[i]
 
-    return str.split("_")[0] + "_" + str.split("_")[1] + " " + new_str 
-
+    return str.split("_")[0] + "_" + str.split("_")[1] + " " + new_str
 
 
 # FILE SYSTEM EVENT HANDLER
@@ -93,11 +95,14 @@ class Handler(FileSystemEventHandler):
             else:
                 print(f"Handling of {filename} file type not yet supported")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     folder_to_track = r"/var/www/html/ademnea_website/public/arriving_hive_media"
     observer = Observer()
     event_handler = Handler()
-    observer.schedule(event_handler, folder_to_track, recursive=True) #handing the observer the folder to track
+    observer.schedule(
+        event_handler, folder_to_track, recursive=True
+    )  # handing the observer the folder to track
     observer.start()
     print("LISTENING STARTED")
     try:
@@ -106,13 +111,3 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         observer.stop()
     observer.join()
-
-    
-
-    
-
-             
-                 
-            
-
-           
