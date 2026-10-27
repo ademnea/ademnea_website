@@ -257,6 +257,19 @@ class CountAnalysisService
      * window recomputed each run, which absorbs seasonal drift and is what
      * the detectors use.
      */
+
+    /**
+     * Normal is a curve, not a number. Two baselines are kept per hive:
+     * 'initial' is the first week of a colony epoch and stays frozen, so a
+     * hive can be compared against how it began; 'rolling' is a trailing
+     * window that absorbs seasonal drift.
+     *
+     * The rolling window deliberately STOPS SHORT of the present by
+     * baseline_lag_days. Without that lag it includes the very days it is
+     * about to judge, so a hive that dropped a fortnight ago would be
+     * measured against its own collapsed state and reported as stable. The
+     * lag is what keeps a level shift visible instead of absorbing it.
+     */
     protected function buildBaselines(Hive $hive, Carbon $to)
     {
         $epoch = $hive->colony_epoch ?: 1;
@@ -272,7 +285,7 @@ class CountAnalysisService
             return;
         }
 
-        // initial - first N valid days, written once then left alone
+        // ---- initial: first N valid days, written once then left alone ----
         $existing = HiveBaseline::where('hive_id', $hive->id)
             ->where('colony_epoch', $epoch)
             ->where('baseline_type', 'initial')
@@ -285,14 +298,26 @@ class CountAnalysisService
             }
         }
 
-        // rolling - trailing window
-        $cut = (clone $to)->subDays($this->cfg['rolling_window_days']);
-        $rolling = $usable->filter(function ($r) use ($cut) {
-            return Carbon::parse($r->date)->greaterThanOrEqualTo($cut);
+        // ---- rolling: trailing window, lagged away from the present ------
+        $windowEnd   = (clone $to)->subDays($this->cfg['baseline_lag_days']);
+        $windowStart = (clone $windowEnd)->subDays($this->cfg['rolling_window_days']);
+
+        $rolling = $usable->filter(function ($r) use ($windowStart, $windowEnd) {
+            $d = Carbon::parse($r->date);
+            return $d->greaterThanOrEqualTo($windowStart) && $d->lessThanOrEqualTo($windowEnd);
         });
 
         if ($rolling->count() >= $this->cfg['min_baseline_days']) {
             $this->writeBaseline($hive, $epoch, 'rolling', $rolling);
+        } else {
+            // Not enough lagged history yet. Rather than fall back to a
+            // contaminated window, leave rolling absent - applyBaseline()
+            // then uses the frozen initial baseline, which is uncontaminated
+            // by definition.
+            HiveBaseline::where('hive_id', $hive->id)
+                ->where('colony_epoch', $epoch)
+                ->where('baseline_type', 'rolling')
+                ->delete();
         }
     }
 
@@ -386,15 +411,40 @@ class CountAnalysisService
      * exterior sensor reading, there is nothing to scale the expectation by.
      * When one arrives, only this method changes.
      */
+
+    /**
+     * Deviation from the hive's reference baseline.
+     *
+     * Prefers the lagged rolling baseline, since it tracks seasonal drift.
+     * Falls back to the frozen initial one when there is not yet enough
+     * lagged history - which is the normal state for a hive's first several
+     * weeks, and for any hive after a re-colonisation resets its epoch.
+     *
+     * conditions_factor is 1.0 throughout: with no weather source and no
+     * exterior sensor reading, there is nothing to scale the expectation by.
+     * When one arrives, only this method changes.
+     */
     protected function applyBaseline(Hive $hive, Carbon $from, Carbon $to)
     {
+        $epoch = $hive->colony_epoch ?: 1;
+
         $baseline = HiveBaseline::where('hive_id', $hive->id)
-            ->where('colony_epoch', $hive->colony_epoch ?: 1)
+            ->where('colony_epoch', $epoch)
             ->rolling()
             ->first();
 
+        $source = 'rolling';
+
         if (!$baseline || !$baseline->base_daily) {
-            return;
+            $baseline = HiveBaseline::where('hive_id', $hive->id)
+                ->where('colony_epoch', $epoch)
+                ->initial()
+                ->first();
+            $source = 'initial';
+        }
+
+        if (!$baseline || !$baseline->base_daily) {
+            return;   // uncharacterised - no deviation can be judged
         }
 
         $rows = HiveDailyFeature::where('hive_id', $hive->id)
@@ -416,6 +466,7 @@ class CountAnalysisService
             $row->expected_total    = $expected;
             $row->ratio             = $ratio;
             $row->z                 = $z;
+            $row->threshold_version = $this->cfg['threshold_version'] . '/' . $source;
             $row->save();
         }
     }
@@ -476,6 +527,31 @@ class CountAnalysisService
      * gradual decline is mislabelled as an abrupt one and the farmer is told
      * the wrong thing about urgency.
      */
+
+    /**
+     * Three shapes of change, three tests.
+     *
+     * A level shift and a slow decline both eventually push z below the
+     * threshold. They are separated by dz, the day-over-day change: a shift
+     * jumps several units in a day, a drift creeps. Without that test a
+     * gradual decline is mislabelled as an abrupt one and the farmer is told
+     * the wrong thing about urgency.
+     *
+     * WHAT THE SLOPE IS FITTED TO MATTERS MORE THAN THE THRESHOLD.
+     *
+     * Fitted to the hive's own activity, a site-wide dip and the recovery
+     * after it read as a decline on every hive at once - three false alarms
+     * from one spell of bad weather. With no weather data there is nothing
+     * to divide that out, so the apiary does the job instead:
+     *
+     *   peer_compared  slope of log(share). A site-wide dip moves every hive
+     *                  together, so shares barely move and the dip cancels.
+     *   solo           slope of log(ratio), with days the apiary test already
+     *                  flagged as site-wide dropped from the window. Weaker,
+     *                  because a partial dip that does not trip that test
+     *                  still leaks through - which is the cost of having
+     *                  fewer than three reporting hives.
+     */
     protected function applyDetectors(Hive $hive, Carbon $from, Carbon $to)
     {
         $rows = HiveDailyFeature::where('hive_id', $hive->id)
@@ -491,61 +567,123 @@ class CountAnalysisService
             return;
         }
 
-        // rolling slope of log(ratio) - fractional change per day
+        // Days on which the whole site was low together. Excluded from the
+        // solo-mode slope so a shared dip cannot masquerade as a hive-
+        // specific decline.
+        $siteWideDays = $this->siteWideDays($hive->farm_id, $rows);
+
         $win = $this->cfg['slope_window_days'];
+
         foreach ($rows as $i => $row) {
+            $peerMode = $row->analysis_mode === 'peer_compared';
+
             $slice = $rows->slice(max(0, $i - $win + 1), min($i + 1, $win))
-                ->filter(function ($r) {
-                    return $r->ratio !== null && $r->ratio > 0;
+                ->filter(function ($r) use ($peerMode, $siteWideDays) {
+                    if ($peerMode) {
+                        return $r->share !== null && $r->share > 0;
+                    }
+                    $day = Carbon::parse($r->date)->toDateString();
+                    return $r->ratio !== null
+                        && $r->ratio > 0
+                        && !in_array($day, $siteWideDays, true);
                 })
                 ->values();
 
-            $row->slope10 = $slice->count() >= $win - 2
-                ? $this->slope(
-                    $slice->map(function ($r) {
-                        return Carbon::parse($r->date)->timestamp / 86400;
-                    })->all(),
-                    $slice->map(function ($r) {
-                        return log($r->ratio);
-                    })->all()
-                )
-                : null;
+            if ($slice->count() < $win - 2) {
+                $row->slope10 = null;
+                $row->save();
+                continue;
+            }
+
+            $x = $slice->map(function ($r) {
+                return Carbon::parse($r->date)->timestamp / 86400;
+            })->all();
+
+            $y = $slice->map(function ($r) use ($peerMode) {
+                return log($peerMode ? $r->share : $r->ratio);
+            })->all();
+
+            $row->slope10 = $this->slope($x, $y);
             $row->save();
         }
 
-        // level shift - a run of low days that began with a step
+        // ---- level shift: a run of low days that began with a step -------
         $run = 0;
         $onset = null;
         $prevZ = null;
+
         foreach ($rows as $row) {
-            $z = $row->z;
+            $z  = $row->z;
             $dz = ($z !== null && $prevZ !== null) ? $z - $prevZ : null;
 
-            if ($z !== null && $z <= $this->cfg['z_sudden']) {
-                $run++;
-            } else {
-                $run = 0;
-            }
+            $run = ($z !== null && $z <= $this->cfg['z_sudden']) ? $run + 1 : 0;
 
-            if (
-                $onset === null
-                && $run >= $this->cfg['persist_days']
-                && $dz !== null && $dz <= $this->cfg['step_dz']
-            ) {
-                $onset = $row->date;
-            }
-            // a step one or two days before the run also qualifies
-            if (
-                $onset === null && $run >= $this->cfg['persist_days']
-                && $prevZ !== null && $prevZ <= $this->cfg['z_sudden'] * 1.5
-            ) {
-                $onset = $row->date;
+            if ($onset === null && $run >= $this->cfg['persist_days']) {
+                $stepped = ($dz !== null && $dz <= $this->cfg['step_dz'])
+                    || ($prevZ !== null && $prevZ <= $this->cfg['z_sudden'] * 1.5);
+
+                // A site-wide day is not a hive-specific shift, however deep.
+                $day = Carbon::parse($row->date)->toDateString();
+                if ($stepped && !in_array($day, $siteWideDays, true)) {
+                    $onset = $row->date;
+                }
             }
 
             $prevZ = $z;
         }
 
         $this->sudden[$hive->id] = $onset;
+    }
+
+    /**
+     * Dates on which every reporting hive at the site was low together.
+     *
+     * This is the only control available without conditions data: hives at
+     * one site share weather, forage and season, so when all of them move
+     * the cause is the site, not any one colony.
+     *
+     * @return array  list of Y-m-d strings
+     */
+    protected function siteWideDays($farmId, $rows)
+    {
+        if (!$farmId) {
+            return [];
+        }
+
+        $dates = $rows->map(function ($r) {
+            return Carbon::parse($r->date)->toDateString();
+        })->unique()->values()->all();
+
+        if (!count($dates)) {
+            return [];
+        }
+
+        $byDate = HiveDailyFeature::where('farm_id', $farmId)
+            ->whereIn('date', $dates)
+            ->conclusive($this->cfg['min_completeness'])
+            ->whereNotNull('z')
+            ->get()
+            ->groupBy(function ($r) {
+                return Carbon::parse($r->date)->toDateString();
+            });
+
+        $siteWide = [];
+
+        foreach ($byDate as $date => $dayRows) {
+            if ($dayRows->count() < $this->cfg['min_peers_for_mode_b']) {
+                continue;   // too few hives to call anything site-wide
+            }
+
+            $low = $dayRows->filter(function ($r) {
+                return $r->z <= $this->cfg['z_sudden'];
+            });
+
+            if ($low->count() === $dayRows->count()) {
+                $siteWide[] = $date;
+            }
+        }
+
+        return $siteWide;
     }
 
     /** @var array  hive_id => date the level shift began, or null */

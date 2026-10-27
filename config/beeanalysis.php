@@ -35,6 +35,16 @@ return [
     'min_baseline_days'     => 5,      // fewer than this and the hive stays uncharacterised
 
     /*
+    | A baseline computed up to today cannot be a fair reference for today -
+    | a hive that collapsed a week ago would be judged against its own
+    | collapsed state and read as normal. The rolling window therefore stops
+    | this many days short of the present, so a change stays visible for at
+    | least that long before it begins contaminating the reference.
+    |
+    | Longer is more conservative: slower to follow genuine seasonal drift,
+    | but a level shift remains detectable for a fortnight.
+    */
+    'baseline_lag_days'     => 14,    /*
     |--------------------------------------------------------------------------
     | Detection
     |--------------------------------------------------------------------------
