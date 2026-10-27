@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -15,16 +16,25 @@ class DatabaseSeeder extends Seeder
     {
         // Check if admin user already exists
         $adminUser = User::where('email', 'admin@admin.com')->first();
-        
+
         if (!$adminUser) {
             $user = User::create([
                 'name' => 'Admin',
                 'email' => 'admin@admin.com',
-                'password'=>bcrypt("admin..123")
+                'password' => bcrypt("admin..123"),
+                'role' => 'admin'
             ]);
-            echo "✅ Created admin user: admin@admin.com\n";
+            echo "Created admin user: admin@admin.com\n";
         } else {
-            echo "ℹ️  Admin user already exists: admin@admin.com\n";
+            // The role column was added after this account may have been made,
+            // so backfill it rather than leaving the admin on the default role.
+            if ($adminUser->role !== 'admin') {
+                $adminUser->role = 'admin';
+                $adminUser->save();
+                echo "Updated admin role for: admin@admin.com\n";
+            } else {
+                echo " Admin user already exists: admin@admin.com\n";
+            }
         }
 
         $this->call([
