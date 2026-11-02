@@ -69,3 +69,32 @@ jobs:
 
       - name: Install PHP libraries
         run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Check PHP syntax
+        run: find app config database routes -name '*.php' -print0 | xargs -0 -n1 -P4 php -d display_errors=stderr -l > /dev/null
+
+      - name: Prepare .env for the tests
+        run: |
+          cp .env.example .env
+          sed -i -E \
+            -e 's/^APP_ENV=.*/APP_ENV=testing/' \
+            -e 's/^APP_DEBUG=.*/APP_DEBUG=true/' \
+            -e 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' \
+            -e 's/^DB_DATABASE=.*/DB_DATABASE=ademnea_test/' \
+            -e 's/^DB_USERNAME=.*/DB_USERNAME=root/' \
+            -e 's/^DB_PASSWORD=.*/DB_PASSWORD=root/' \
+            .env
+          php artisan key:generate --force
+
+      - name: Run every migration on an empty database
+        run: php artisan migrate --force
+
+      - name: Check that Laravel's caches build
+        run: |
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+          php artisan optimize:clear
+
+      - name: Run the tests
+        run: vendor/bin/phpunit
