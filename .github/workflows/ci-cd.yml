@@ -1,0 +1,100 @@
+name: CI/CD
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-cd-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  php:
+    name: PHP checks and tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: ademnea_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 --silent"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v7
+
+      - name: Set up PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, dom, gd, zip, pdo_mysql
+          coverage: none
+          tools: composer:v2
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --no-check-publish
+
+      - name: Find Composer's cache folder
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Composer downloads
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Create the folders git doesn't track
+        run: mkdir -p bootstrap/cache storage/framework/{cache/data,sessions,views} storage/logs
+
+      - name: Install PHP libraries
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Check PHP syntax
+        run: find app config database routes -name '*.php' -print0 | xargs -0 -n1 -P4 php -d display_errors=stderr -l > /dev/null
+
+      - name: Prepare .env for the tests
+        run: |
+          cp .env.example .env
+          sed -i -E \
+            -e 's/^APP_ENV=.*/APP_ENV=testing/' \
+            -e 's/^APP_DEBUG=.*/APP_DEBUG=true/' \
+            -e 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' \
+            -e 's/^DB_DATABASE=.*/DB_DATABASE=ademnea_test/' \
+            -e 's/^DB_USERNAME=.*/DB_USERNAME=root/' \
+            -e 's/^DB_PASSWORD=.*/DB_PASSWORD=root/' \
+            .env
+          php artisan key:generate --force
+
+      - name: Run every migration on an empty database
+        run: php artisan migrate --force
+
+      - name: Check that Laravel's caches build
+        run: |
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+          php artisan optimize:clear
+
+      - name: Run the tests
+        run: vendor/bin/phpunit
