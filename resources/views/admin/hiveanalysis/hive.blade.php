@@ -45,6 +45,7 @@
 
   <div id="chartDaily"   style="width:100%;height:340px;"></div>
   <div id="chartZ"       style="width:100%;height:260px;margin-top:20px;"></div>
+  <div id="chartProfileMean" style="width:100%;height:300px;margin-top:20px;"></div>
   <div id="chartProfile" style="width:100%;height:300px;margin-top:20px;"></div>
 
   <h4 class="font-bold text-green-700 mt-8 mb-2">Insight history</h4>
@@ -82,6 +83,7 @@ $(function () {
   var daily   = echarts.init(document.getElementById('chartDaily'));
   var zChart  = echarts.init(document.getElementById('chartZ'));
   var profile = echarts.init(document.getElementById('chartProfile'));
+  var profileMean = echarts.init(document.getElementById('chartProfileMean'));
 
   var start = moment().subtract(29, 'days');
   var end   = moment();
@@ -122,6 +124,30 @@ $(function () {
             { name: 'trend', type: 'line', yAxisIndex: 1, data: res.slope, connectNulls: false }
           ]
         }, true);
+
+        if (res.profile_mean) {
+          var mHours = Object.keys(res.profile_mean).sort(function (a, b) { return a - b; });
+          profileMean.setOption({
+            title: { text: 'Average day in the selected range (mean per hour)' },
+            tooltip: { trigger: 'axis', formatter: function (params) {
+              var h = params[0].axisValue;
+              return h + ':00 &middot; ' + res.profile_mean[h].n + ' clips<br/>'
+                + params.map(function (p) { return p.marker + p.seriesName + ': ' + p.value; }).join('<br/>');
+            } },
+            legend: { top: 30 },
+            grid: { top: 70 },
+            xAxis: { type: 'category', data: mHours, name: 'hour' },
+            yAxis: { type: 'value', name: 'bees / frame' },
+            series: [
+              { name: 'mean of mean_count', type: 'bar',
+                data: mHours.map(function (h) { return res.profile_mean[h].mean; }) },
+              { name: 'mean of max_count', type: 'line',
+                data: mHours.map(function (h) { return res.profile_mean[h].mean_max; }) }
+            ]
+          }, true);
+        } else {
+          profileMean.clear();
+        }
 
         if (res.profile) {
           var hours = Object.keys(res.profile).sort(function (a, b) { return a - b; });

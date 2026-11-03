@@ -11,6 +11,7 @@ use App\Models\HiveDailyFeature;
 use App\Models\HiveInsight;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * The analysis pages. Reads only from the tables the nightly command writes -
@@ -190,8 +191,79 @@ class HiveAnalysisController extends Controller
                 return $this->round($r->completeness, 2);
             }),
             'profile'      => $baseline ? $baseline->hourly_profile : null,
+            'profile_mean' => $this->hourlyMeans($hiveId, $start, $end),
             'base_daily'   => $baseline ? $this->round($baseline->base_daily) : null,
         ]);
+    }
+
+    /**
+     * Mean bees-per-frame at each capture hour over the selected date range,
+     * straight from bee_counts. Complements the baseline's median/quartile
+     * profile, which is fixed to the rolling window.
+     *
+     * Same row filter and same capture-time rule as the analysis service:
+     * done rows with enough frames, hour taken from the clip filename.
+     */
+    protected function hourlyMeans($hiveId, $start, $end)
+    {
+        $minFrames = config('beeanalysis.min_frames', 10);
+
+        $rows = DB::table('bee_counts as bc')
+            ->join('hive_videos as hv', 'hv.id', '=', 'bc.hive_video_id')
+            ->where('hv.hive_id', $hiveId)
+            ->where('bc.processing_status', 'done')
+            ->where('bc.frames_analyzed', '>=', $minFrames)
+            ->whereNotNull('bc.mean_count')
+            ->whereBetween('hv.created_at', [
+                Carbon::parse($start)->subDay()->startOfDay(),
+                Carbon::parse($end)->addDay()->endOfDay(),
+            ])
+            ->select('bc.mean_count', 'bc.max_count', 'hv.path', 'hv.created_at')
+            ->get();
+
+        $buckets = [];
+        foreach ($rows as $r) {
+            $ts = $this->captureTime($r->path, $r->created_at);
+            if ($ts->lt(Carbon::parse($start)->startOfDay()) || $ts->gt(Carbon::parse($end)->endOfDay())) {
+                continue;
+            }
+            $h = (int) $ts->format('G');
+            $buckets[$h]['mean'][] = (float) $r->mean_count;
+            $buckets[$h]['max'][]  = (float) $r->max_count;
+        }
+
+        $out = [];
+        foreach ($buckets as $h => $b) {
+            $n = count($b['mean']);
+            $out[(string) $h] = [
+                'mean'     => round(array_sum($b['mean']) / $n, 3),
+                'mean_max' => round(array_sum($b['max']) / $n, 3),
+                'n'        => $n,
+            ];
+        }
+        ksort($out, SORT_NUMERIC);
+
+        return $out ?: null;
+    }
+
+    /**
+     * Capture time from the clip filename, e.g. 9_2026-05-17_232640.mp4,
+     * falling back to created_at. Mirrors CountAnalysisService::captureTime.
+     */
+    protected function captureTime($path, $createdAt)
+    {
+        if (preg_match('/(\d{4}-\d{2}-\d{2})[_\- ](\d{2})(\d{2})(\d{2})/', (string) $path, $m)) {
+            try {
+                return Carbon::createFromFormat(
+                    'Y-m-d H:i:s',
+                    $m[1] . ' ' . $m[2] . ':' . $m[3] . ':' . $m[4]
+                );
+            } catch (\Exception $e) {
+                // fall through
+            }
+        }
+
+        return Carbon::parse($createdAt);
     }
 
     /**
