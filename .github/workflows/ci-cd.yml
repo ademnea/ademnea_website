@@ -98,3 +98,30 @@ jobs:
 
       - name: Run the tests
         run: vendor/bin/phpunit
+
+  deploy:
+    name: Deploy to production
+    needs: php
+    if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment:
+      name: production
+      url: https://ademneaproject.net/
+    concurrency:
+      group: production-deploy
+      cancel-in-progress: false
+
+    steps:
+      - name: Deploy to server via SSH
+        env:
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_IP }}
+          SSH_USER: ${{ secrets.SSH_USERNAME }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" "sudo -n /usr/local/bin/ademnea-website-deploy $GITHUB_SHA"
+
